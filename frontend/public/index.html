@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Firstname Lastname — Resume</title>
+  <meta name="description" content="Professional resume of Firstname Lastname" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+  :root{
+    --bg:#fafafa;
+    --text:#1a1a1a;
+    --muted:#555;
+    --accent:#0b69ff;
+    --max-width:800px;
+    --gap:20px;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);line-height:1.55;padding:24px}
+  .wrap{max-width:var(--max-width);margin:0 auto}
+
+  header{margin-bottom:28px}
+  .name{font-size:32px;font-weight:700;margin-bottom:4px}
+  .title{color:var(--muted);font-size:15px}
+
+  h2{font-size:15px;font-weight:600;color:var(--accent);margin-bottom:10px;margin-top:28px}
+
+  .section{margin-bottom:24px}
+
+  p, .job-desc, .small{color:var(--muted)}
+
+  /* Cards removed — simple clean sections */
+  .section-block{padding:12px 0;border-bottom:1px solid #ddd}
+  .section-block:last-child{border-bottom:0}
+
+  .job-title{font-weight:600}
+  .job-meta{font-size:14px;color:var(--muted);margin-bottom:6px}
+  .job-desc{font-size:14px;margin-top:8px}
+
+  .skills, .contact-list{margin-top:8px}
+  .skill{display:inline-block;padding:4px 10px;border:1px solid #ccc;border-radius:6px;font-size:13px;margin:4px 6px 0 0;color:var(--text)}
+
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  @media print{
+    body{padding:0;background:white}
+    a[href]:after{content:""}
+  }
+</style>
+</head>
+<body>
+  <main class="wrap" id="main">
+    <header>
+      <div class="name-block">
+        <h1 class="name">Ken Barker</h1>
+        <div class="title">Director, Program & Project Management</div>
+      </div>
+      <div class="actions">
+        <a class="btn btn-primary" href="#download" onclick="window.print();return false;">Print / Save PDF</a>
+        <a class="btn btn-outline" href="#contact">Contact</a>
+      </div>
+    </header>
+
+    <section class="resume">
+      <!-- Left / Main -->
+      <div>
+        <article class="card section" aria-labelledby="summary-heading">
+          <h2 id="summary-heading">Professional summary</h2>
+          <p class="lead">Seasoned IT program manager with 30+ years leading complex programs and projects for organizations in the finance, insurange, government and technology sectors.  Proven experience in planning, communications, risk and financial management.</p>
+        </article>
+
+        <article class="card section" aria-labelledby="exp-heading">
+          <h2 id="exp-heading">Professional Experience</h2>
+
+          <div class="job" role="article">
+            <div class="job-title">Program Manager, Secret Project X</div>
+            <div class="job-meta">Client One — Toronto, ON • Jan 2018 — Present</div>
+            <div class="job-desc">Did a thing for these guys</div>
+          </div>
+
+          <div class="job" role="article">
+            <div class="job-title">Program Manager, Secret Project Y</div>
+            <div class="job-meta">Client One — Toronto, ON • year - year</div>
+            <div class="job-desc">Did a thing for these guys too.</div>
+          </div>
+
+          <!-- Duplicate this block for each role -->
+        </article>
+
+        <article class="card section" aria-labelledby="projects-heading">
+          <h2 id="projects-heading">Selected projects</h2>
+          <div class="projects small muted">
+            <div><strong>ERP Migration & Implementation</strong> — Led the migration of legacy monolith to containerized microservices on AWS; improved autoscaling and decreased costs by 18%.</div>
+            <div><strong>CI/CD Overhaul</strong> — Implemented company-wide pipelines and testing strategy to reduce defective releases by 33%.</div>
+          </div>
+        </article>
+
+        <article class="card section" aria-labelledby="education-heading">
+          <h2 id="education-heading">Education</h2>
+          <div class="small muted">
+            <div><strong>Bachelor of Business Administration</strong> — St. Francis Xavier University, 1994</div>
+            <div><strong>Professional certificates</strong> — PMP (2002), Certified ScrumMaster (2007)</div>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Single column: moved side content below -->
+      <div class="card" aria-labelledby="contact-heading">
+          <h2 id="contact-heading">Contact</h2>
+          <div class="contact-list">
+            <div class="contact-item"><strong>Email:</strong> <a href="mailto:you@example.com">you@example.com</a></div>
+            <div class="contact-item"><strong>Phone:</strong> <a href="tel:+15551234567">+1 (555) 123-4567</a></div>
+            <div class="contact-item"><strong>Location:</strong> City, Province, Country</div>
+            <div class="contact-item"><strong>Website:</strong> <a href="#">your-site.com</a></div>
+            <div class="contact-item"><strong>LinkedIn:</strong> <a href="#">linkedin.com/in/yourname</a></div>
+          </div>
+      </div>
+
+      <div class="card" aria-labelledby="skills-heading">
+          <h2 id="skills-heading">Skills</h2>
+          <div class="skills" role="list">
+            <div class="skill">Program Management</div>
+            <div class="skill">Cloud Architecture (AWS/GCP)</div>
+            <div class="skill">CI/CD & DevOps</div>
+            <div class="skill">Agile & Scrum</div>
+            <div class="skill">SRE / Observability</div>
+            <div class="skill">Stakeholder Management</div>
+          </div>
+      </div>
+
+      <div class="card" aria-labelledby="tools-heading">
+          <h2 id="tools-heading">Tools & Tech</h2>
+          <div class="small muted">Docker · Kubernetes · Terraform · GitHub · Jenkins · Prometheus · Grafana · Python · Java · SQL</div>
+      </div>
+
+      <div class="card" aria-labelledby="lang-heading">
+          <h2 id="lang-heading">Languages</h2>
+          <div class="small muted">English (native) · French (professional)</div>
+      </div>
+    </section>
+
+    <footer style="margin-top:18px;text-align:center" class="muted small">Last updated: <!-- update manually --> Nov 24, 2025</footer>
+  </main>
+
+  <script>
+    // Small script: replace placeholder name with content from querystring (optional)
+    (function(){
+      function qs(name){
+        name = name.replace(/[\[\]]/g,'\\$&');
+        var regex = new RegExp('[?&]'+name+'(=([^&#]*)|&|#|$)');
+        var results = regex.exec(window.location.href);
+        if(!results) return null;
+        if(!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g,' '));
+      }
+      var n=qs('name'); if(n){document.querySelector('.name').textContent = n}
+    })();
+  </script>
+
+  <!-- Optional JSON-LD for better discoverability by parsers -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Ken Barker",
+    "jobTitle": "Director, Program & Project Management",
+    "url": "https://your-site.com",
+    "sameAs": ["https://www.linkedin.com/in/kenbarker"]
+  }
+  </script>
+</body>
+</html>
