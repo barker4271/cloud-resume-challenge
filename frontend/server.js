@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Home page
 app.get('/', (req, res) => {
-  res.render('home', { title: "Home" });ls
+  res.render('home', { title: "Home" });
 });
 
 // Resume page
