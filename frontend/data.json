@@ -1,0 +1,40 @@
+{
+  "experience": [
+    {
+      "title": "Program Manager, Secret Project X",
+      "client": "Client One",
+      "location": "Toronto, ON",
+      "dates": "Jan 2018 – Present",
+      "description": "Did a thing for these guys"
+    },
+    {
+      "title": "Program Manager, Secret Project Y",
+      "client": "Client Two",
+      "location": "Toronto, ON",
+      "dates": "2014 – 2018",
+      "description": "Did a thing for these guys too."
+    }
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Business Administration",
+      "school": "St. Francis Xavier University",
+      "year": 1994
+    },
+    {
+      "certificates": ["PMP (2002)", "Certified ScrumMaster (2007)"]
+    }
+  ],
+  "skills": [
+    "Program Management",
+    "Project Management",
+    "Risk Assessment and Oversight",
+    "Agile & Scrum",
+    "Financial Management (budgeting, cost control, reporting)",
+    "Stakeholder Management"
+  ],
+  "languages": [
+    "English (native)",
+    "French (professional)"
+  ]
+}
