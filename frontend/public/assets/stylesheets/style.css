@@ -1,5 +1,4 @@
-<style>
-  :root{
+:root{
     --bg:#fafafa;
     --text:#1a1a1a;
     --muted:#555;
@@ -40,4 +39,3 @@
     body{padding:0;background:white}
     a[href]:after{content:""}
   }
-</style>
