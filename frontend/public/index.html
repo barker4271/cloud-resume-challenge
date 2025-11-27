@@ -3,43 +3,110 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
   <title>Ken Barker - Professional Resume</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="wrap" id="main">
-    <header>
-      <div class="name-block">
-        <h1 class="name">Ken Barker</h1>
-        <div class="title">Director, Program & Project Management</div>
-      </div>
-      <div class="actions">
-        <a class="btn btn-primary" href="#download" onclick="window.print();return false;">Print / Save PDF</a>
-      </div>
-    </header>
+<main class="wrap" id="main">
+  <header>
+    <div class="name-block">
+      <h1 class="name">Ken Barker</h1>
+      <div class="title">Director, Program & Project Management</div>
+    </div>
+    <div class="actions">
+      <a class="btn btn-primary" href="#download" onclick="window.print();return false;">Print / Save PDF</a>
+    </div>
+  </header>
 
-    <section class="resume">
+  <section class="resume">
 
-      <!-- Experience -->
-      <article class="card section" aria-labelledby="exp-heading">
-        <h2 id="exp-heading">Professional Experience</h2>
-        <div id="experience-container"></div>
-      </article>
+    <!-- Experience -->
+    <article class="card section" aria-labelledby="exp-heading">
+      <h2 id="exp-heading">Professional Experience</h2>
+      <div id="experience-container"></div>
+    </article>
 
-      <!-- Education -->
-      <article class="card section" aria-labelledby="education-heading">
-        <h2 id="education-heading">Education</h2>
-        <div id="education-container"></div>
-      </article>
+    <!-- Education -->
+    <article class="card section" aria-labelledby="education-heading">
+      <h2 id="education-heading">Education</h2>
+      <div id="education-container"></div>
+    </article>
 
-      <!-- Skills -->
-      <article class="card section" aria-labelledby="skills-heading">
-        <h2 id="skills-heading">Skills</h2>
-        <div id="skills-container" class="skills"></div>
-      </article>
+    <!-- Skills -->
+    <article class="card section" aria-labelledby="skills-heading">
+      <h2 id="skills-heading">Skills</h2>
+      <div id="skills-container" class="skills"></div>
+    </article>
 
-      <!-- Languages -->
-      <article class="card section" aria-labelledby="lang-heading">
-        <h2 id="lang-heading">Languages</h2>
-        <div id="languages-container" class="small muted"></di
+    <!-- Languages -->
+    <article class="card section" aria-labelledby="lang-heading">
+      <h2 id="lang-heading">Languages</h2>
+      <div id="languages-container" class="small muted"></div>
+    </article>
+
+  </section>
+
+  <footer style="margin-top:18px;text-align:center" class="muted small">
+    Last updated: Nov 25, 2025
+  </footer>
+</main>
+
+<script>
+async function loadData(url, callback) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Failed to fetch ${url}`);
+    const data = await res.json();
+    callback(data);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Experience
+loadData('/experience', data => {
+  const container = document.getElementById('experience-container');
+  data.forEach(job => {
+    const div = document.createElement('div');
+    div.classList.add('job');
+    div.innerHTML = `
+      <div class="job-title">${job.title}</div>
+      <div class="job-meta">${job.client} — ${job.location} • ${job.dates}</div>
+      <div class="job-desc">${job.description}</div>
+    `;
+    container.appendChild(div);
+  });
+});
+
+// Education
+loadData('/education', data => {
+  const container = document.getElementById('education-container');
+  data.forEach(edu => {
+    if (edu.degree) {
+      container.innerHTML += `<div><strong>${edu.degree}</strong> — ${edu.school}, ${edu.year}</div>`;
+    }
+    if (edu.certificates) {
+      container.innerHTML += `<div><strong>Professional Certificates:</strong> ${edu.certificates.join(', ')}</div>`;
+    }
+  });
+});
+
+// Skills
+loadData('/skills', data => {
+  const container = document.getElementById('skills-container');
+  data.forEach(skill => {
+    const div = document.createElement('div');
+    div.classList.add('skill');
+    div.textContent = skill;
+    container.appendChild(div);
+  });
+});
+
+// Languages
+loadData('/languages', data => {
+  const container = document.getElementById('languages-container');
+  container.textContent = data.join(' · ');
+});
+</script>
+</body>
+</html>

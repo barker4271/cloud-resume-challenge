@@ -5,48 +5,45 @@ const fs = require('fs');
 const app = express();
 const PORT = 3000;
 
-// Serve static files (index.html, style.css, images)
+// Serve static files from 'public'
 app.use(express.static(path.join(__dirname, 'public')));
 
-// --- Dynamic routes ---
+// Helper function to read JSON
+function readData(callback) {
+  fs.readFile(path.join(__dirname, 'data.json'), 'utf8', (err, data) => {
+    if (err) return callback(err);
+    callback(null, JSON.parse(data));
+  });
+}
 
-// Return experience JSON
+// Routes
 app.get('/experience', (req, res) => {
-  fs.readFile('data.json', 'utf8', (err, data) => {
+  readData((err, data) => {
     if (err) return res.status(500).send('Error reading data.json');
-    const jsonData = JSON.parse(data);
-    res.json(jsonData.experience);
+    res.json(data.experience);
   });
 });
 
-// Return education JSON
 app.get('/education', (req, res) => {
-  fs.readFile('data.json', 'utf8', (err, data) => {
+  readData((err, data) => {
     if (err) return res.status(500).send('Error reading data.json');
-    const jsonData = JSON.parse(data);
-    res.json(jsonData.education);
+    res.json(data.education);
   });
 });
 
-// Return skills JSON
 app.get('/skills', (req, res) => {
-  fs.readFile('data.json', 'utf8', (err, data) => {
+  readData((err, data) => {
     if (err) return res.status(500).send('Error reading data.json');
-    const jsonData = JSON.parse(data);
-    res.json(jsonData.skills);
+    res.json(data.skills);
   });
 });
 
-// Return languages JSON
 app.get('/languages', (req, res) => {
-  fs.readFile('data.json', 'utf8', (err, data) => {
+  readData((err, data) => {
     if (err) return res.status(500).send('Error reading data.json');
-    const jsonData = JSON.parse(data);
-    res.json(jsonData.languages);
+    res.json(data.languages);
   });
 });
 
-// --- Start server ---
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+// Start server
+app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
