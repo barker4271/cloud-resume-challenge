@@ -1,49 +1,43 @@
 const express = require('express');
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const PORT = 3000;
 
-// Serve static files from 'public'
+// Tell Express to use the "views" folder for templates
+app.set('view engine', 'ejs');
+
+const expressLayouts = require('express-ejs-layouts');
+
+app.use(expressLayouts);
+
+
+// Serve all static files from /public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Helper function to read JSON
-function readData(callback) {
-  fs.readFile(path.join(__dirname, 'data.json'), 'utf8', (err, data) => {
-    if (err) return callback(err);
-    callback(null, JSON.parse(data));
-  });
-}
+// -------- ROUTES --------
 
-// Routes
-app.get('/experience', (req, res) => {
-  readData((err, data) => {
-    if (err) return res.status(500).send('Error reading data.json');
-    res.json(data.experience);
-  });
+// Home page
+app.get('/', (req, res) => {
+  res.render('home', { title: "Home" });ls
 });
 
-app.get('/education', (req, res) => {
-  readData((err, data) => {
-    if (err) return res.status(500).send('Error reading data.json');
-    res.json(data.education);
-  });
+// Resume page
+app.get('/resume', (req, res) => {
+  res.render('resume', { title: "Resume" });
 });
 
-app.get('/skills', (req, res) => {
-  readData((err, data) => {
-    if (err) return res.status(500).send('Error reading data.json');
-    res.json(data.skills);
-  });
+// Projects page
+app.get('/projects', (req, res) => {
+  res.render('projects', { title: "Projects" });
 });
 
-app.get('/languages', (req, res) => {
-  readData((err, data) => {
-    if (err) return res.status(500).send('Error reading data.json');
-    res.json(data.languages);
-  });
+// Blog page
+app.get('/blog', (req, res) => {
+  res.render('blog', { title: "Blog" });
 });
 
 // Start server
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});

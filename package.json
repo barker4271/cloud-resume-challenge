@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "express-ejs-layouts": "^2.5.1"
+  }
+}
