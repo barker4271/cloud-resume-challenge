@@ -1,9 +1,14 @@
 {
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "Node + Express frontend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "express-ejs-layouts": "^2.5.1",
+    "ejs": "^3.1.9"
   }
-}
-
-"scripts": {
-  "start": "node server.js"
 }
