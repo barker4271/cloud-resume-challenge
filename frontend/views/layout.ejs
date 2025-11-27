@@ -1,33 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex, nofollow">
-    <title><%= title %> - Ken Barker</title>
-    <link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Block search engines from indexing -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/style.css">
 </head>
-
 <body>
+  <div class="container">
+    <aside class="sidebar">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/resume">Resume</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/blog">Blog</a></li>
+      </ul>
+    </aside>
 
-    <div class="layout">
-
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-            <h2>Navigation</h2>
-            <a href="/">Home</a>
-            <a href="/resume">Resume</a>
-            <a href="/projects">Projects</a>
-            <a href="/blog">Blog</a>
-        </aside>
-
-        <!-- MAIN CONTENT -->
-        <main class="content-area">
-            <%- body %>
-        </main>
-
-    </div>
-
+    <main class="content">
+      <%- body %>
+    </main>
+  </div>
 </body>
 </html>
