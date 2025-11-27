@@ -21,3 +21,10 @@
         <li><a href="/blog" class="<%= title === 'Blog' ? 'active' : '' %>">Blog</a></li>
       </ul>
     </aside>
+
+    <main class="content">
+      <%- body %>  <!-- This injects the content of the current page -->
+    </main>
+  </div>
+</body>
+</html>

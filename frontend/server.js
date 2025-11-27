@@ -20,7 +20,7 @@ const siteData = JSON.parse(rawData);
 
 // Routes
 app.get('/', (req, res) => res.render('home', { title: 'Home' }));
-app.get('/resume', (req, res) => res.render('resume', { title: 'Resume' }));
+app.get('/resume', (req, res) => res.render('resume', { title: 'Resume', resume: siteData.resume }));
 app.get('/projects', (req, res) => res.render('projects', { title: 'Projects', projects: siteData.projects }));
 app.get('/blog', (req, res) => res.render('blog', { title: 'Blog', blog: siteData.blog }));
 
