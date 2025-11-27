@@ -1,18 +1,10 @@
 <h1>Projects</h1>
 
 <section class="projects">
-  <article>
-    <h2>Project A</h2>
-    <p>Description of Project A...</p>
-  </article>
-
-  <article>
-    <h2>Project B</h2>
-    <p>Description of Project B...</p>
-  </article>
-
-  <article>
-    <h2>Project C</h2>
-    <p>Description of Project C...</p>
-  </article>
+  <% projects.forEach(project => { %>
+    <article>
+      <h2><%= project.name %></h2>
+      <p><%= project.description %></p>
+    </article>
+  <% }) %>
 </section>

@@ -1,43 +1,27 @@
 const express = require('express');
 const path = require('path');
+const expressLayouts = require('express-ejs-layouts');
+const fs = require('fs');
 
 const app = express();
 const PORT = 3000;
 
-// Tell Express to use the "views" folder for templates
 app.set('view engine', 'ejs');
-
-const expressLayouts = require('express-ejs-layouts');
-
 app.use(expressLayouts);
+app.set('layout', 'layout');
 
-
-// Serve all static files from /public
+// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// -------- ROUTES --------
+// Read data.json once at startup
+const dataPath = path.join(__dirname, 'data.json');
+const rawData = fs.readFileSync(dataPath);
+const siteData = JSON.parse(rawData);
 
-// Home page
-app.get('/', (req, res) => {
-  res.render('home', { title: "Home" });
-});
+// Routes
+app.get('/', (req, res) => res.render('home', { title: 'Home' }));
+app.get('/resume', (req, res) => res.render('resume', { title: 'Resume' }));
+app.get('/projects', (req, res) => res.render('projects', { title: 'Projects', projects: siteData.projects }));
+app.get('/blog', (req, res) => res.render('blog', { title: 'Blog', blog: siteData.blog }));
 
-// Resume page
-app.get('/resume', (req, res) => {
-  res.render('resume', { title: "Resume" });
-});
-
-// Projects page
-app.get('/projects', (req, res) => {
-  res.render('projects', { title: "Projects" });
-});
-
-// Blog page
-app.get('/blog', (req, res) => {
-  res.render('blog', { title: "Blog" });
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));

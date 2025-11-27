@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Block search engines from indexing -->
+  <!-- Block search engines -->
   <meta name="robots" content="noindex, nofollow">
   <meta name="googlebot" content="noindex, nofollow">
 
@@ -15,16 +15,9 @@
   <div class="container">
     <aside class="sidebar">
       <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/resume">Resume</a></li>
-        <li><a href="/projects">Projects</a></li>
-        <li><a href="/blog">Blog</a></li>
+        <li><a href="/" class="<%= title === 'Home' ? 'active' : '' %>">Home</a></li>
+        <li><a href="/resume" class="<%= title === 'Resume' ? 'active' : '' %>">Resume</a></li>
+        <li><a href="/projects" class="<%= title === 'Projects' ? 'active' : '' %>">Projects</a></li>
+        <li><a href="/blog" class="<%= title === 'Blog' ? 'active' : '' %>">Blog</a></li>
       </ul>
     </aside>
-
-    <main class="content">
-      <%- body %>
-    </main>
-  </div>
-</body>
-</html>
