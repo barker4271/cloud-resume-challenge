@@ -76,7 +76,7 @@ a:hover {
 /* Sidebar */
 .sidebar {
   flex: 1 1 200px;
-  min-width: 180px;
+  min-width: 110px;
   background: #f0f0f0;
   padding: 1rem;
   border-right: 1px solid #ddd;
