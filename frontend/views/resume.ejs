@@ -1,41 +1,90 @@
-<h1>Resume</h1>
+<div class="resume-page">
 
-<section class="experience">
-  <h2>Professional Experience</h2>
-  <% resume.experience.forEach(job => { %>
-    <div class="job">
-      <div class="job-title"><%= job.title %></div>
-      <div class="job-meta"><%= job.client %> — <%= job.location %> • <%= job.dates %></div>
-      <div class="job-desc"><%= job.description %></div>
+  <!-- Top header card -->
+  <div class="card resume-header">
+    <div class="resume-header-main">
+      <h1 class="name">Ken Barker</h1>
+      <div class="title">Director, Program &amp; Project Management</div>
+      <div class="location small muted">Bobcaygeon, ON, Canada</div>
     </div>
-  <% }) %>
-</section>
+    <div class="resume-header-contact">
+      <div><strong>Email:</strong> <a href="mailto:barker4271@outlook.com">barker4271@outlook.com</a></div>
+      <div><strong>Phone:</strong> <a href="tel:+14162781782">+1 (416) 278-1782</a></div>
+      <div><strong>LinkedIn:</strong> <span>linkedin.com/in/kenbarker</span></div>
+      <div style="margin-top:0.5rem;">
+        <button class="btn btn-primary" onclick="window.print();">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
 
-<section class="education">
-  <h2>Education</h2>
-  <% resume.education.forEach(edu => { %>
-    <% if (edu.degree) { %>
-      <div><strong><%= edu.degree %></strong> — <%= edu.school %>, <%= edu.year %></div>
-    <% } else if (edu.certificates) { %>
-      <div><strong>Professional Certificates:</strong> <%= edu.certificates.join(', ') %></div>
-    <% } %>
-  <% }) %>
-</section>
+  <div class="resume-body">
+    <!-- Left (main) column -->
+    <div class="resume-main-column">
 
-<section class="skills">
-  <h2>Skills</h2>
-  <ul>
-    <% resume.skills.forEach(skill => { %>
-      <li><%= skill %></li>
-    <% }) %>
-  </ul>
-</section>
+      <article class="card resume-section">
+        <h2>Professional Summary</h2>
+        <p class="lead">
+          Seasoned IT program manager with 30+ years leading complex programs and projects for organizations in the
+          finance, insurance, government and technology sectors. Proven experience in planning, communications,
+          risk and financial management.
+        </p>
+      </article>
 
-<section class="languages">
-  <h2>Languages</h2>
-  <ul>
-    <% resume.languages.forEach(lang => { %>
-      <li><%= lang %></li>
-    <% }) %>
-  </ul>
-</section>
+      <article class="card resume-section">
+        <h2>Professional Experience</h2>
+
+        <% resume.experience.forEach(job => { %>
+          <div class="job">
+            <div class="job-title"><%= job.title %></div>
+            <div class="job-meta">
+              <%= job.client %> — <%= job.location %> • <%= job.dates %>
+            </div>
+            <div class="job-desc"><%= job.description %></div>
+          </div>
+        <% }) %>
+      </article>
+
+      <article class="card resume-section">
+        <h2>Education</h2>
+        <div class="small muted">
+          <% resume.education.forEach(edu => { %>
+            <% if (edu.degree) { %>
+              <div>
+                <strong><%= edu.degree %></strong> — <%= edu.school %>, <%= edu.year %>
+              </div>
+            <% } else if (edu.certificates) { %>
+              <div>
+                <strong>Professional Certificates:</strong> <%= edu.certificates.join(', ') %>
+              </div>
+            <% } %>
+          <% }) %>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- Right (side) column -->
+    <div class="resume-side-column">
+
+      <article class="card resume-section">
+        <h2>Skills</h2>
+        <div class="skills-tags">
+          <% resume.skills.forEach(skill => { %>
+            <span class="skill-tag"><%= skill %></span>
+          <% }) %>
+        </div>
+      </article>
+
+      <article class="card resume-section">
+        <h2>Languages</h2>
+        <ul class="plain-list small muted">
+          <% resume.languages.forEach(lang => { %>
+            <li><%= lang %></li>
+          <% }) %>
+        </ul>
+      </article>
+
+    </div>
+  </div>
+
+</div>
