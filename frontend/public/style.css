@@ -75,12 +75,14 @@ a:hover {
 
 /* Sidebar */
 .sidebar {
-  flex: 1 1 200px;
-  min-width: 110px;
+  flex: 0 0 140px;
+  min-width: 140px;
+  max-width: 140px;
   background: #f0f0f0;
   padding: 1rem;
   border-right: 1px solid #ddd;
 }
+
 
 .sidebar ul {
   list-style: none;
