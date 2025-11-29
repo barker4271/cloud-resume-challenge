@@ -12,5 +12,7 @@ Used ChatGPT to generate a professional style resume using a modern, simple, cle
 
 Used W3C Linter to clean up html
 
-No need for a local ws?
+Installed local web server, which was new
+
+reworked all of the pages to add a left hand menu, and load dynamic content from a json file.
 
