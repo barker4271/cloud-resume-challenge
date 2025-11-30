@@ -1,17 +1,19 @@
 {
-  "name": "wookietoast-site",
+  "name": "frontend",
   "version": "1.0.0",
-  "description": "Ken Barker personal site (Home, Resume, Projects, Blog) using Node.js + Express + EJS",
+  "description": "Wookietoast website frontend",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "echo \"No build step\""
   },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
     "express-ejs-layouts": "^2.5.1",
-    "ejs": "^3.1.9"
-  },
-  "engines": {
-    "node": ">=18"
+    "fs-extra": "^11.2.0"
   }
 }
