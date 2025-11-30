@@ -12,3 +12,7 @@ TenantId             fbec6ece-94af-4aa4-9214-09087b601439
 
 
 All work being done via "WookieAdmin@wookietoastoutlook.onmicrosoft.com" ID
+
+Azure is a nightmare to get configured correctly...SO MANY small settings that are not obvious to a newcomer
+
+
