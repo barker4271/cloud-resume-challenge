@@ -1,0 +1,67 @@
+# ================================================================
+# GitHub Actions Workflow for CI/CD to Azure Web App
+# Deploys Express Node.js site to wookietoast-web on every push to main
+# ================================================================
+
+name: Deploy to Azure Web App
+
+# ------------------------------------------------
+# Trigger: deploy whenever code is pushed to main
+# ------------------------------------------------
+on:
+  push:
+    branches:
+      - main
+
+# ------------------------------------------------
+# Define the single job: build and deploy
+# ------------------------------------------------
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest  # GitHub-hosted Linux runner
+
+    steps:
+      # ------------------------------
+      # Step 1: Checkout code from GitHub
+      # ------------------------------
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ------------------------------
+      # Step 2: Setup Node.js runtime
+      # ------------------------------
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'  # Compatible with your Express app
+
+      # ------------------------------
+      # Step 3: Install dependencies
+      # (Your app lives in the frontend folder)
+      # ------------------------------
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install
+
+      # ------------------------------
+      # Step 4: Build step (if needed)
+      # Express apps don't require build
+      # ------------------------------
+      - name: Build (skip for Express)
+        run: echo "No build step required"
+
+      # --------------------------------------------------------
+      # Step 5: Deploy to Azure Web App using Publish Profile
+      #
+      # NOTE: I have added the publish profile from Azure
+      #       as a GitHub secret named:
+      #       AZURE_WEBAPP_PUBLISH_PROFILE
+      #
+      # --------------------------------------------------------
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "wookietoast-web"  # Your Web App name
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./frontend  # The folder that gets deployed
