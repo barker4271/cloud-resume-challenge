@@ -4,7 +4,7 @@ const expressLayouts = require('express-ejs-layouts');
 const fs = require('fs');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const counterPath = path.join(__dirname, "counter.json");
 let counter = JSON.parse(fs.readFileSync(counterPath, "utf-8"));
@@ -39,4 +39,7 @@ app.get('/resume', (req, res) => res.render('resume', { title: 'Resume', resume:
 app.get('/projects', (req, res) => res.render('projects', { title: 'Projects', projects: siteData.projects }));
 app.get('/blog', (req, res) => res.render('blog', { title: 'Blog', blog: siteData.blog }));
 
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+});
+
