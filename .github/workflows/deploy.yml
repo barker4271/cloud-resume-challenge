@@ -59,9 +59,10 @@ jobs:
       #       AZURE_WEBAPP_PUBLISH_PROFILE
       #
       # --------------------------------------------------------
-      - name: Deploy to Azure Web App
+        - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "wookietoast-web"  # Your Web App name
+          app-name: "wookietoast-web"
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./frontend  # The folder that gets deployed
+          package: frontend #this is there the app is located
+
