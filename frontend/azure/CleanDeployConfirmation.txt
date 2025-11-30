@@ -1,0 +1,163 @@
+#  Record of clean azure deploy after blowing my brains out for a whole fucking day....
+
+{
+  "id": "/subscriptions/39f12930-00c8-4597-a6fb-1dc8411f4358/resourceGroups/wookietoast-rg/providers/Microsoft.Resources/deployments/main",
+  "location": null,
+  "name": "main",
+  "properties": {
+    "correlationId": "a3601078-104e-4fab-affd-f64a966559fc",
+    "debugSetting": null,
+    "dependencies": [
+      {
+        "dependsOn": [
+          {
+            "id": "/subscriptions/39f12930-00c8-4597-a6fb-1dc8411f4358/resourceGroups/wookietoast-rg/providers/Microsoft.Web/serverfarms/wookietoast-plan",
+            "resourceGroup": "wookietoast-rg",
+            "resourceName": "wookietoast-plan",
+            "resourceType": "Microsoft.Web/serverfarms"
+          }
+        ],
+        "id": "/subscriptions/39f12930-00c8-4597-a6fb-1dc8411f4358/resourceGroups/wookietoast-rg/providers/Microsoft.Web/sites/wookietoast-web",
+        "resourceGroup": "wookietoast-rg",
+        "resourceName": "wookietoast-web",
+        "resourceType": "Microsoft.Web/sites"
+      }
+    ],
+    "diagnostics": null,
+    "duration": "PT1M51.6361806S",
+    "error": null,
+    "extensions": null,
+    "mode": "Incremental",
+    "onErrorDeployment": null,
+    "outputResources": [
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/39f12930-00c8-4597-a6fb-1dc8411f4358/resourceGroups/wookietoast-rg/providers/Microsoft.Storage/storageAccounts/wookiestore",
+        "identifiers": null,
+        "resourceGroup": "wookietoast-rg",
+        "resourceType": null
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/39f12930-00c8-4597-a6fb-1dc8411f4358/resourceGroups/wookietoast-rg/providers/Microsoft.Web/serverfarms/wookietoast-plan",
+        "identifiers": null,
+        "resourceGroup": "wookietoast-rg",
+        "resourceType": null
+      },
+      {
+        "apiVersion": null,
+        "extension": null,
+        "id": "/subscriptions/39f12930-00c8-4597-a6fb-1dc8411f4358/resourceGroups/wookietoast-rg/providers/Microsoft.Web/sites/wookietoast-web",
+        "identifiers": null,
+        "resourceGroup": "wookietoast-rg",
+        "resourceType": null
+      }
+    ],
+    "outputs": {
+      "appServicePlanId": {
+        "type": "String",
+        "value": "/subscriptions/39f12930-00c8-4597-a6fb-1dc8411f4358/resourceGroups/wookietoast-rg/providers/Microsoft.Web/serverfarms/wookietoast-plan"
+      },
+      "storageAccountId": {
+        "type": "String",
+        "value": "/subscriptions/39f12930-00c8-4597-a6fb-1dc8411f4358/resourceGroups/wookietoast-rg/providers/Microsoft.Storage/storageAccounts/wookiestore"
+      },
+      "webAppUrl": {
+        "type": "String",
+        "value": "https://wookietoast-web.azurewebsites.net"
+      }
+    },
+    "parameters": {
+      "appServicePlanName": {
+        "type": "String",
+        "value": "wookietoast-plan"
+      },
+      "location": {
+        "type": "String",
+        "value": "canadaeast"
+      },
+      "storageAccountName": {
+        "type": "String",
+        "value": "wookiestore"
+      },
+      "webAppName": {
+        "type": "String",
+        "value": "wookietoast-web"
+      }
+    },
+    "parametersLink": null,
+    "providers": [
+      {
+        "id": null,
+        "namespace": "Microsoft.Storage",
+        "providerAuthorizationConsentState": null,
+        "registrationPolicy": null,
+        "registrationState": null,
+        "resourceTypes": [
+          {
+            "aliases": null,
+            "apiProfiles": null,
+            "apiVersions": null,
+            "capabilities": null,
+            "defaultApiVersion": null,
+            "locationMappings": null,
+            "locations": [
+              "canadaeast"
+            ],
+            "properties": null,
+            "resourceType": "storageAccounts",
+            "zoneMappings": null
+          }
+        ]
+      },
+      {
+        "id": null,
+        "namespace": "Microsoft.Web",
+        "providerAuthorizationConsentState": null,
+        "registrationPolicy": null,
+        "registrationState": null,
+        "resourceTypes": [
+          {
+            "aliases": null,
+            "apiProfiles": null,
+            "apiVersions": null,
+            "capabilities": null,
+            "defaultApiVersion": null,
+            "locationMappings": null,
+            "locations": [
+              "canadaeast"
+            ],
+            "properties": null,
+            "resourceType": "serverfarms",
+            "zoneMappings": null
+          },
+          {
+            "aliases": null,
+            "apiProfiles": null,
+            "apiVersions": null,
+            "capabilities": null,
+            "defaultApiVersion": null,
+            "locationMappings": null,
+            "locations": [
+              "canadaeast"
+            ],
+            "properties": null,
+            "resourceType": "sites",
+            "zoneMappings": null
+          }
+        ]
+      }
+    ],
+    "provisioningState": "Succeeded",
+    "templateHash": "17953756659344442704",
+    "templateLink": null,
+    "timestamp": "2025-11-30T20:30:35.917047+00:00",
+    "validatedResources": null,
+    "validationLevel": null
+  },
+  "resourceGroup": "wookietoast-rg",
+  "tags": null,
+  "type": "Microsoft.Resources/deployments"
+}
