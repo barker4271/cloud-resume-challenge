@@ -1,16 +1,17 @@
 {
-  "name": "frontend",
+  "name": "wookietoast-site",
   "version": "1.0.0",
-  "description": "Node + Express frontend",
+  "description": "Ken Barker personal site (Home, Resume, Projects, Blog) using Node.js + Express + EJS",
   "main": "server.js",
   "scripts": {
-  "start": "node server.js"
-}
-
+    "start": "node server.js"
   },
   "dependencies": {
-    "ejs": "^3.1.9",
     "express": "^5.1.0",
-    "express-ejs-layouts": "^2.5.1"
+    "express-ejs-layouts": "^2.5.1",
+    "ejs": "^3.1.9"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
