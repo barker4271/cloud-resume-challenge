@@ -55,6 +55,9 @@ app.get('/blog', (req, res) => {
   });
 });
 
+app.get("/health", (req, res) => res.status(200).send("OK"));
+
+
 // Start Server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
