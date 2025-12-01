@@ -1,4 +1,4 @@
-name: Deploy Node App to Azure Web App
+name: Deploy to Azure Web App
 
 on:
   push:
@@ -10,34 +10,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Check out repository
-      - name: Checkout code
+      # Step 1 — Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Set working directory to `frontend`
-      - name: Change working directory
-        run: echo "WORKDIR=frontend" >> $GITHUB_ENV
-
-      # Install Node
-      - name: Set up Node.js
+      # Step 2 — Set up Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18.x"
+          node-version: "18"
 
-      # Install dependencies
+      # Step 3 — Install dependencies
       - name: Install dependencies
-        working-directory: frontend
         run: npm install
 
-      # Build (if you ever add a build script)
-      - name: Build project
-        working-directory: frontend
-        run: npm run build --if-present
-
-      # Deploy to Azure Web App
+      # Step 4 — Deploy using publish profile
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: "wookietoast-web"
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE}}
-          package: frontend
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          package: .
