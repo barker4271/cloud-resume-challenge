@@ -20,17 +20,17 @@ jobs:
         with:
           node-version: '18'
 
-      # 3. Install dependencies (inside frontend folder)
+      # 3. Install dependencies inside frontend folder
       - name: Install dependencies
         working-directory: ./frontend
         run: npm install
 
-      # 4. Build (optional—runs only if build script exists)
+      # 4. Build project (only if you define "build")
       - name: Build project
         working-directory: ./frontend
         run: npm run build --if-present
 
-      # 5. Zip content for deployment
+      # 5. Zip everything in frontend folder for deployment
       - name: Create deployment package
         run: |
           cd frontend
@@ -40,6 +40,6 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: cloud-resume-challenge
+          app-name: wookietoast-web
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: deploy.zip
