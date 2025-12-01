@@ -1,4 +1,4 @@
-name: Deploy to Azure Web App
+name: Deploy Node App to Azure Web App
 
 on:
   push:
@@ -10,24 +10,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1 — Checkout code
+      # 1. Checkout Code
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      # Step 2 — Set up Node
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # 2. Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: '18'
 
-      # Step 3 — Install dependencies
+      # 3. Install dependencies (inside frontend folder)
       - name: Install dependencies
+        working-directory: ./frontend
         run: npm install
 
-      # Step 4 — Deploy using publish profile
+      # 4. Build (optional—runs only if build script exists)
+      - name: Build project
+        working-directory: ./frontend
+        run: npm run build --if-present
+
+      # 5. Zip content for deployment
+      - name: Create deployment package
+        run: |
+          cd frontend
+          zip -r ../deploy.zip .
+
+      # 6. Deploy to Azure Web App using publish profile
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: "wookietoast-web"
+          app-name: cloud-resume-challenge
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: .
+          package: deploy.zip
