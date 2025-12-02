@@ -57,6 +57,18 @@ app.get('/blog', (req, res) => {
 
 app.get("/health", (req, res) => res.status(200).send("OK"));
 
+// --- Custom Error Pages ---
+
+// 500 handler (must be before 404 handler)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).render("500", { title: "Server Error" });
+});
+
+// 404 handler (must be last)
+app.use((req, res) => {
+  res.status(404).render("404", { title: "Page Not Found" });
+});
 
 // Start Server
 app.listen(PORT, () => {

@@ -1,0 +1,25 @@
+<%- include('layout', { title: 'Page Not Found' }) %>
+
+<section class="error-page">
+    <h1>404</h1>
+    <p>Poof!  The page you are trying to access does not exist.</p>
+    <a href="/" class="btn">Back to Home</a>
+</section>
+
+<style>
+.error-page {
+    text-align: center;
+    padding: 80px 20px;
+}
+.error-page h1 {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+.btn {
+    padding: 10px 20px;
+    background: #444;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+}
+</style>

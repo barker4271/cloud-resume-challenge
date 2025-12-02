@@ -20,3 +20,6 @@ NS1-01.AZURE-DNS.COM
 NS2-01.AZURE-DNS.NET
 NS3-01.AZURE-DNS.ORG
 NS4-01.AZURE-DNS.INFO
+
+Azure Front Door service setup manually via azure portal, not bicep, as that was too confusing a set of videos to follow
+
