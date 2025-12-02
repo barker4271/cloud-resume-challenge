@@ -1,26 +1,17 @@
-<%- include({ title: 'Server Error' }) %>
+<section class="error-page" style="text-align: center; padding: 60px 20px;">
+    <h1 style="font-size: 4rem; margin-bottom: 10px;">500</h1>
+    <p style="font-size: 1.5rem; margin-bottom: 20px;">
+        Something went wrong on our end.
+    </p>
 
-<section class="error-page">
-    <h1>500</h1>
-    <p>Something went wrong on our end.</p>
-
-    <a href="/" class="btn">Return Home</a>
+    <a href="/" style="
+        display: inline-block;
+        padding: 10px 20px;
+        background: #d83b01;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+    ">
+        Return Home
+    </a>
 </section>
-
-<style>
-.error-page {
-    text-align: center;
-    padding: 80px 20px;
-}
-.error-page h1 {
-    font-size: 4rem;
-    margin-bottom: 20px;
-}
-.btn {
-    padding: 10px 20px;
-    background: #444;
-    color: #fff;
-    border-radius: 6px;
-    text-decoration: none;
-}
-</style>
