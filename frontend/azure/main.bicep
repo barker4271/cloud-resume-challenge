@@ -1,30 +1,30 @@
-// ============================================================================
-// Cosmos DB, Storage Account, and App Service Enhancement Bicep Template
-// THIS VERSION DOES NOT MODIFY YOUR APP SERVICE STARTUP COMMAND
-// ============================================================================
-
-// -------------------------
-// PARAMETERS
-// -------------------------
-
-@description('Name of the Cosmos DB account')
-param cosmosAccountName string
-
-@description('Name of the Cosmos DB SQL database')
-param cosmosDatabaseName string
-
-@description('Name of the Cosmos DB container')
-param cosmosContainerName string
-
-@description('Location of the resources')
+@description('Location for all resources.')
 param location string = resourceGroup().location
 
-@description('The name of the storage account to create')
-param storageAccountName string = 'wookiestorage'
+@description('Cosmos DB account name')
+param cosmosAccountName string
 
-// -------------------------
-// COSMOS DB ACCOUNT
-// -------------------------
+@description('Cosmos DB database name')
+param cosmosDatabaseName string
+
+@description('Cosmos DB container name')
+param cosmosContainerName string
+
+@description('Existing storage account name')
+param storageAccountName string
+
+// -------------------------------------------------------
+// EXISTING RESOURCES (NOT MODIFIED)
+// -------------------------------------------------------
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' existing = {
+  name: storageAccountName
+}
+
+// -------------------------------------------------------
+// COSMOS DB ACCOUNT (SERVERLESS) — FIXED VERSION
+// (Removed apiProperties.serverVersion, which caused failure)
+// -------------------------------------------------------
 
 resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
   name: cosmosAccountName
@@ -32,9 +32,7 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
   kind: 'GlobalDocumentDB'
   properties: {
     databaseAccountOfferType: 'Standard'
-    consistencyPolicy: {
-      defaultConsistencyLevel: 'Session'
-    }
+
     locations: [
       {
         locationName: location
@@ -42,20 +40,23 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
         isZoneRedundant: false
       }
     ]
+
+    consistencyPolicy: {
+      defaultConsistencyLevel: 'Session'
+    }
+
+    // Serverless capability (allowed)
     capabilities: [
       {
         name: 'EnableServerless'
       }
     ]
-    apiProperties: {
-      serverVersion: '4.0'
-    }
   }
 }
 
-// -------------------------
-// COSMOS SQL DATABASE
-// -------------------------
+// -------------------------------------------------------
+// COSMOS DB SQL DATABASE
+// -------------------------------------------------------
 
 resource cosmosDatabase 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2023-11-15' = {
   name: '${cosmosAccount.name}/${cosmosDatabaseName}'
@@ -64,60 +65,25 @@ resource cosmosDatabase 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2023
       id: cosmosDatabaseName
     }
   }
-  dependsOn: [
-    cosmosAccount
-  ]
 }
 
-// -------------------------
-// COSMOS CONTAINER
-// -------------------------
+// -------------------------------------------------------
+// COSMOS DB CONTAINER
+// -------------------------------------------------------
 
 resource cosmosContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2023-11-15' = {
-  name: '${cosmosAccount.name}/${cosmosDatabaseName}/${cosmosContainerName}'
+  name: '${cosmosAccount.name}/${cosmosDatabase.name}/${cosmosContainerName}'
   properties: {
     resource: {
       id: cosmosContainerName
       partitionKey: {
         paths: [
-          '/topic'
+          '/topic'  // Partition by topic
         ]
         kind: 'Hash'
       }
     }
   }
-  dependsOn: [
-    cosmosDatabase
-  ]
 }
-
-// -------------------------
-// STORAGE ACCOUNT
-// -------------------------
-
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' existing = {
-  name: storageAccountName
-}
-
-// -------------------------
-// APP SERVICE PLAN (EXISTING)
-// -------------------------
-
-resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' existing = {
-  name: 'wookietoast-plan'
-}
-
-// -------------------------
-// WEB APP (EXISTING W/O STARTUP COMMAND CHANGE)
-// -------------------------
-
-resource webApp 'Microsoft.Web/sites@2023-01-01' existing = {
-  name: 'wookietoast-web'
-}
-
-// NOTE:
-// We intentionally do NOT modify webApp.properties.siteConfig.appCommandLine
-// because your existing startup command ("node server.js") is working and stable.
-// ============================================================================
 
 output cosmosEndpoint string = cosmosAccount.properties.documentEndpoint
