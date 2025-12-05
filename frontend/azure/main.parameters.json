@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccountName": {
+      "value": "wookiestorage"
+    },
+    "appServicePlanName": {
+      "value": "wookietoast-plan"
+    },
+    "webAppName": {
+      "value": "wookietoast-web"
+    },
+    "location": {
+      "value": "canadaeast"
+    },
+    "cosmosAccountName": {
+      "value": "wookiecosmos"
+    },
+    "cosmosDatabaseName": {
+      "value": "wookieblog"
+    },
+    "cosmosContainerName": {
+      "value": "wookiecontainer"
+    }
+  }
+}
