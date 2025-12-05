@@ -22,8 +22,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' existing 
 }
 
 // -------------------------------------------------------
-// COSMOS DB ACCOUNT (SERVERLESS) — FIXED VERSION
-// (Removed apiProperties.serverVersion, which caused failure)
+// COSMOS DB ACCOUNT (SERVERLESS)
 // -------------------------------------------------------
 
 resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
@@ -45,7 +44,7 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
       defaultConsistencyLevel: 'Session'
     }
 
-    // Serverless capability (allowed)
+    // Serverless capability
     capabilities: [
       {
         name: 'EnableServerless'
@@ -59,7 +58,8 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
 // -------------------------------------------------------
 
 resource cosmosDatabase 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2023-11-15' = {
-  name: '${cosmosAccount.name}/${cosmosDatabaseName}'
+  name: cosmosDatabaseName
+  parent: cosmosAccount
   properties: {
     resource: {
       id: cosmosDatabaseName
@@ -72,13 +72,14 @@ resource cosmosDatabase 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2023
 // -------------------------------------------------------
 
 resource cosmosContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2023-11-15' = {
-  name: '${cosmosAccount.name}/${cosmosDatabase.name}/${cosmosContainerName}'
+  name: cosmosContainerName
+  parent: cosmosDatabase
   properties: {
     resource: {
       id: cosmosContainerName
       partitionKey: {
         paths: [
-          '/topic'  // Partition by topic
+          '/topic'
         ]
         kind: 'Hash'
       }
