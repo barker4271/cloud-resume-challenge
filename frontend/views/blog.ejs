@@ -1,60 +1,47 @@
 <%--
   blog.ejs
 
-  This page displays all blog posts loaded from Azure Cosmos DB.
+  Purpose:
+  - Display blog posts fetched from Azure Cosmos DB
+  - Provide a button to create a new post
 
-  Data passed in from server.js:
-    - title   : string
-    - posts   : array of blog post objects
-    - message : optional string (shown when Cosmos is not configured)
-
-  Blog post object structure (from Cosmos):
-    {
-      id: string,
-      createdAt: ISO date string,
-      topic: string,
-      body: string
-    }
+  Data provided by server.js:
+    title   : string
+    posts   : array (may be empty)
+    message : optional string
 
   IMPORTANT:
-  - express-ejs-layouts automatically injects this content
-    into <%- body %> in layout.ejs
-  - DO NOT include layout manually here
+  - DO NOT include layout manually
+  - express-ejs-layouts injects this into <%- body %>
 --%>
 
-<section class="blog-page" style="
+<section style="
   max-width: 900px;
   margin: 0 auto;
   padding: 40px 20px;
 ">
 
-  <!-- Page Header -->
-  <header style="margin-bottom: 30px; text-align: center;">
-    <h1 style="font-size: 2.5rem; margin-bottom: 10px;">
-      Blog
-    </h1>
+  <h1 style="text-align: center; margin-bottom: 10px;">
+    Blog
+  </h1>
 
-    <p style="color: #ccc;">
-      Thoughts, experiments, and notes from the journey.
-    </p>
+  <p style="text-align: center; color: #aaa; margin-bottom: 30px;">
+    Notes from the journey.
+  </p>
 
-    <!-- New Blog Post Button -->
+  <div style="text-align: center; margin-bottom: 40px;">
     <a href="/blog/new"
        style="
-         display: inline-block;
-         margin-top: 20px;
          padding: 10px 20px;
          background: #1976d2;
-         color: #fff;
+         color: white;
          text-decoration: none;
          border-radius: 6px;
-         font-size: 1rem;
        ">
       + New Blog Post
     </a>
-  </header>
+  </div>
 
-  <!-- Optional system message (e.g., Cosmos not configured) -->
   <% if (message) { %>
     <div style="
       background: #332;
@@ -68,26 +55,14 @@
     </div>
   <% } %>
 
-  <!-- Blog Posts List -->
   <% if (!posts || posts.length === 0) { %>
 
-    <!-- Empty State -->
-    <div style="
-      text-align: center;
-      color: #aaa;
-      margin-top: 60px;
-    ">
-      <p style="font-size: 1.2rem;">
-        No blog posts yet.
-      </p>
-      <p>
-        Be the first to add one.
-      </p>
-    </div>
+    <p style="text-align: center; color: #888;">
+      No blog posts yet.
+    </p>
 
   <% } else { %>
 
-    <!-- Render each blog post -->
     <% posts.forEach(function(post) { %>
 
       <article style="
@@ -95,33 +70,19 @@
         padding: 25px;
         border-radius: 8px;
         margin-bottom: 25px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.4);
       ">
 
-        <!-- Topic -->
-        <h2 style="
-          margin-top: 0;
-          margin-bottom: 10px;
-          color: #ffee58;
-        ">
+        <h2 style="margin-top: 0; color: #ffee58;">
           <%= post.topic %>
         </h2>
 
-        <!-- Created Date -->
-        <div style="
-          font-size: 0.9rem;
-          color: #aaa;
-          margin-bottom: 15px;
-        ">
-          Posted on
-          <%= new Date(post.createdAt).toLocaleString() %>
-        </div>
+        <p style="font-size: 0.9rem; color: #aaa;">
+          Posted on <%= new Date(post.createdAt).toLocaleString() %>
+        </p>
 
-        <!-- Body -->
         <div style="
-          font-size: 1.05rem;
+          margin-top: 15px;
           line-height: 1.6;
-          color: #e0e0e0;
           white-space: pre-wrap;
         ">
           <%= post.body %>
