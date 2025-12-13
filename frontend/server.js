@@ -118,8 +118,9 @@ app.get('/blog', async (req, res, next) => {
      * ORDER BY createdAt DESC ensures newest posts appear first
      */
     const querySpec = {
-      query: 'SELECT * FROM c ORDER BY c.createdAt DESC'
+    query: "SELECT * FROM c"
     };
+
 
     // Execute query
     const { resources: posts } = await container.items
