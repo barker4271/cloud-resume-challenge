@@ -7,6 +7,17 @@
  * - Stores and retrieves blog posts from Azure Cosmos DB
  */
 
+/* ------------------------------------------------------------------
+   FIX: Azure App Service Node 18 does NOT expose global crypto
+   Cosmos SDK requires crypto.randomUUID()
+   ------------------------------------------------------------------ */
+const crypto = require("crypto");
+global.crypto = crypto.webcrypto;
+
+/* ------------------------------------------------------------------
+   Imports
+   ------------------------------------------------------------------ */
+
 const express = require("express");
 const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
@@ -22,26 +33,22 @@ const PORT = process.env.PORT || 3000;
    Cosmos DB Configuration
    ------------------------------------------------------------------ */
 
-// These MUST exist as App Settings in Azure
 const COSMOS_ENDPOINT = process.env.COSMOS_ENDPOINT;
 const COSMOS_KEY = process.env.COSMOS_KEY;
 
-// Names MUST match exactly what you deployed via Bicep
 const COSMOS_DATABASE_NAME = "wookieblog";
 const COSMOS_CONTAINER_NAME = "wookiecontainer";
 
-// Create Cosmos client (does NOT make a network call yet)
 const cosmosClient = new CosmosClient({
   endpoint: COSMOS_ENDPOINT,
   key: COSMOS_KEY
 });
 
-// Get database + container references
 const database = cosmosClient.database(COSMOS_DATABASE_NAME);
 const container = database.container(COSMOS_CONTAINER_NAME);
 
 /* ------------------------------------------------------------------
-   Local Counter (file-based)
+   Local Counter
    ------------------------------------------------------------------ */
 
 const counterPath = path.join(__dirname, "counter.json");
@@ -55,10 +62,7 @@ app.set("view engine", "ejs");
 app.use(expressLayouts);
 app.set("layout", "layout");
 
-// Serve static files from /public
 app.use(express.static(path.join(__dirname, "public")));
-
-// Parse form submissions
 app.use(express.urlencoded({ extended: true }));
 
 /* ------------------------------------------------------------------
@@ -66,14 +70,12 @@ app.use(express.urlencoded({ extended: true }));
    ------------------------------------------------------------------ */
 
 const dataPath = path.join(__dirname, "data.json");
-const rawData = fs.readFileSync(dataPath);
-const siteData = JSON.parse(rawData);
+const siteData = JSON.parse(fs.readFileSync(dataPath));
 
 /* ------------------------------------------------------------------
    Routes
    ------------------------------------------------------------------ */
 
-// Home
 app.get("/", (req, res) => {
   counter.visits += 1;
   fs.writeFileSync(counterPath, JSON.stringify(counter, null, 2));
@@ -84,7 +86,6 @@ app.get("/", (req, res) => {
   });
 });
 
-// Resume
 app.get("/resume", (req, res) => {
   res.render("resume", {
     title: "Resume",
@@ -92,7 +93,6 @@ app.get("/resume", (req, res) => {
   });
 });
 
-// Projects
 app.get("/projects", (req, res) => {
   res.render("projects", {
     title: "Projects",
@@ -101,16 +101,13 @@ app.get("/projects", (req, res) => {
 });
 
 /* ------------------------------------------------------------------
-   BLOG ROUTES (Cosmos-backed)
+   BLOG ROUTES (Cosmos DB)
    ------------------------------------------------------------------ */
 
-// View blog posts
 app.get("/blog", async (req, res, next) => {
   try {
-    // Intentionally simple query for debugging
-    // (ORDER BY will be reintroduced once confirmed working)
     const querySpec = {
-      query: "SELECT * FROM c"
+      query: "SELECT * FROM c ORDER BY c.createdAt DESC"
     };
 
     const { resources: posts } = await container.items
@@ -123,52 +120,43 @@ app.get("/blog", async (req, res, next) => {
     });
 
   } catch (err) {
-    // VERY IMPORTANT: log everything Cosmos gives us
     console.error("===== COSMOS BLOG QUERY FAILED =====");
-    console.error("Message:", err.message);
-    console.error("Code:", err.code);
-    console.error("Body:", err.body);
+    console.error(err);
     console.error("===================================");
-
-    next(err); // pass to 500 handler
+    next(err);
   }
 });
 
-// New blog post form
 app.get("/blog/new", (req, res) => {
-  res.render("blog-new", {
-    title: "New Blog Post"
-  });
+  res.render("blog-new", { title: "New Blog Post" });
 });
 
-// Handle blog post submission
 app.post("/blog", async (req, res, next) => {
   try {
     const { topic, body } = req.body;
 
     const newPost = {
-      id: Date.now().toString(),          // required by Cosmos
-      topic,                              // partition key
+      id: crypto.randomUUID(),
+      topic,
       body,
       createdAt: new Date().toISOString()
     };
 
     await container.items.create(newPost);
-
     res.redirect("/blog");
 
   } catch (err) {
     console.error("===== COSMOS BLOG INSERT FAILED =====");
-    console.error("Message:", err.message);
-    console.error("Code:", err.code);
-    console.error("Body:", err.body);
+    console.error(err);
     console.error("====================================");
-
     next(err);
   }
 });
 
-// Health check (used by App Service)
+/* ------------------------------------------------------------------
+   Health Check
+   ------------------------------------------------------------------ */
+
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
@@ -177,13 +165,11 @@ app.get("/health", (req, res) => {
    Error Handling
    ------------------------------------------------------------------ */
 
-// 500 handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).render("500", { title: "Server Error" });
 });
 
-// 404 handler (must be last)
 app.use((req, res) => {
   res.status(404).render("404", { title: "Page Not Found" });
 });
