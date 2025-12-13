@@ -1,40 +1,43 @@
-<!-- views/blog.ejs -->
-<section class="content">
+<%
+// views/blog.ejs
+// This page displays all blog posts pulled from Azure Cosmos DB
+// It assumes `posts` is passed in as an array from server.js
+%>
 
-  <h1>Blog</h1>
+<section class="page">
+  <header class="page-header">
+    <h1>Blog</h1>
+    <p class="page-subtitle">
+      Thoughts, notes, and experiments from the Wookiee engineering desk.
+    </p>
+  </header>
 
-  <p>
-    Thoughts, notes, and experiments from the Wookiee engineering desk.
-  </p>
-
-  <p style="margin-bottom: 30px;">
-    <a href="/blog/new" class="button">
+  <div class="page-actions">
+    <a href="/blog/new" class="button primary">
       + Add New Blog Post
     </a>
-  </p>
+  </div>
 
-  <% if (!posts || posts.length === 0) { %>
-    <p>No blog posts yet. Be the first to post!</p>
-  <% } else { %>
-
-    <ul class="blog-list">
+  <div class="blog-list">
+    <% if (!posts || posts.length === 0) { %>
+      <p class="empty-state">
+        No blog posts yet. Be the first to post!
+      </p>
+    <% } else { %>
       <% posts.forEach(post => { %>
+        <article class="blog-post">
+          <header>
+            <h2><%= post.topic %></h2>
+            <time datetime="<%= post.createdAt %>">
+              <%= new Date(post.createdAt).toLocaleString() %>
+            </time>
+          </header>
 
-        <li class="blog-post">
-          <h2><%= post.topic %></h2>
-
-          <small>
-            <%= new Date(post.createdAt).toLocaleString() %>
-          </small>
-
-          <p>
-            <%= post.body %>
-          </p>
-        </li>
-
+          <div class="blog-body">
+            <p><%= post.body %></p>
+          </div>
+        </article>
       <% }) %>
-    </ul>
-
-  <% } %>
-
+    <% } %>
+  </div>
 </section>
