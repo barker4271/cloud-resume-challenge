@@ -1,68 +1,73 @@
-<%--
-  blog.ejs
-
-  Renders the Blog page.
-  - Displays a list of blog posts fetched from Cosmos DB
-  - Shows a friendly message when no posts exist
-  - Provides a button to create a new blog post
---%>
-
 <section class="content">
+  <h1>Blog</h1>
 
-  <header style="margin-bottom: 30px;">
-    <h1>Blog</h1>
-    <p>Thoughts from the Wookiee mind.</p>
-
-    <a href="/blog/new"
-       style="
-         display: inline-block;
-         margin-top: 15px;
-         padding: 10px 20px;
-         background: #1976d2;
-         color: white;
-         text-decoration: none;
-         border-radius: 6px;
-       ">
-      + New Blog Post
+  <!-- Button to create a new blog post -->
+  <p>
+    <a href="/blog/new" class="btn">
+      ➕ Add New Blog Post
     </a>
-  </header>
+  </p>
 
-  <%--
-    If there are NO posts, show a friendly message
-  --%>
+  <!-- If no blog posts exist -->
   <% if (!posts || posts.length === 0) { %>
-
-    <p style="margin-top: 40px; font-style: italic;">
-      No blog posts yet. The archives are empty… for now.
-    </p>
-
+    <p>No blog posts yet. Be the first to write one!</p>
   <% } else { %>
 
-    <%--
-      Render each blog post
-    --%>
-    <% posts.forEach(function(post) { %>
+    <!-- Blog post list -->
+    <ul class="blog-list">
+      <% posts.forEach(function(post) { %>
+        <li class="blog-item">
+          <h3><%= post.topic %></h3>
 
-      <article style="
-        margin-bottom: 40px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid #444;
-      ">
+          <p class="blog-meta">
+            <em>
+              Posted on
+              <%= new Date(post.createdAt).toLocaleString() %>
+            </em>
+          </p>
 
-        <h2><%= post.topic %></h2>
-
-        <p style="color: #aaa; font-size: 0.9rem;">
-          <%= new Date(post.createdAt).toLocaleString() %>
-        </p>
-
-        <p style="margin-top: 15px; line-height: 1.6;">
-          <%= post.body %>
-        </p>
-
-      </article>
-
-    <% }); %>
+          <p class="blog-body">
+            <%= post.body %>
+          </p>
+        </li>
+      <% }); %>
+    </ul>
 
   <% } %>
-
 </section>
+
+<style>
+  .blog-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .blog-item {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .blog-meta {
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .blog-body {
+    margin-top: 10px;
+    white-space: pre-wrap;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 8px 14px;
+    background: #1976d2;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+
+  .btn:hover {
+    background: #125aa0;
+  }
+</style>
