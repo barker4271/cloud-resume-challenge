@@ -40,3 +40,7 @@ Azure Front Door service setup manually via azure portal, not bicep, as that was
 
 confirmation via whois of DNS server repoints to Azure
 
+Adding in a COSMOS DB and then using that to store and serve up blog posts.
+
+
+
