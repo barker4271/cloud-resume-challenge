@@ -2,39 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-
-  <!-- Page title passed in from each route -->
   <title><%= title || "Wookietoast" %></title>
-
-  <!-- Responsive layout -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Main site stylesheet (this restores your original look) -->
+  <!-- Existing site styles -->
   <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
 
-  <!-- Site header / navigation -->
-  <header class="site-header">
-    <nav class="site-nav">
+  <!-- Sidebar navigation (LEFT) -->
+  <aside class="sidebar">
+    <h1 class="site-title">Wookietoast</h1>
+    <nav class="nav-links">
       <a href="/">Home</a>
       <a href="/resume">Resume</a>
       <a href="/projects">Projects</a>
       <a href="/blog">Blog</a>
     </nav>
-  </header>
+  </aside>
 
   <!-- Main content area -->
-  <main class="site-content">
-    <!-- This is where each page's EJS content is injected -->
+  <main class="content">
     <%- body %>
   </main>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-    © <%= new Date().getFullYear() %> Wookietoast
-  </footer>
 
 </body>
 </html>
