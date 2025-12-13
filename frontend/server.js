@@ -123,8 +123,11 @@ app.get('/blog', async (req, res, next) => {
 
     // Execute query
     const { resources: posts } = await container.items
-      .query(querySpec)
-      .fetchAll();
+    .query(querySpec, {
+      enableCrossPartitionQuery: true
+   })
+    .fetchAll();
+
 
     res.render('blog', {
       title: 'Blog',
