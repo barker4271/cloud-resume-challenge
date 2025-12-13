@@ -1,72 +1,77 @@
 /**
  * server.js
- *
  * Main Express server for Wookietoast
- * - Serves pages using EJS templates
- * - Stores and retrieves blog posts from Azure Cosmos DB
  */
 
 const express = require("express");
 const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
 const fs = require("fs");
-const crypto = require("crypto"); // REQUIRED for UUIDs in Node 18
+
+// IMPORTANT: make crypto global for Azure + Cosmos SDK
+const crypto = require("crypto");
+global.crypto = crypto;
+
 const { CosmosClient } = require("@azure/cosmos");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 /* ============================================================
+   Visit Counter (restored)
+============================================================ */
+
+const counterPath = path.join(__dirname, "counter.json");
+let counter = JSON.parse(fs.readFileSync(counterPath, "utf-8"));
+
+/* ============================================================
    Azure Cosmos DB Configuration
 ============================================================ */
 
-// These come from Azure App Service → Configuration → App settings
 const COSMOS_ENDPOINT = process.env.COSMOS_ENDPOINT;
 const COSMOS_KEY = process.env.COSMOS_KEY;
 
-// Names you created via Bicep
 const DATABASE_NAME = "wookieblog";
 const CONTAINER_NAME = "wookiecontainer";
 
-// Create Cosmos client
 const cosmosClient = new CosmosClient({
   endpoint: COSMOS_ENDPOINT,
   key: COSMOS_KEY,
 });
 
-// Get database + container references
 const database = cosmosClient.database(DATABASE_NAME);
 const container = database.container(CONTAINER_NAME);
 
 /* ============================================================
-   Express App Setup
+   Express Setup
 ============================================================ */
 
-// Needed to read POST form data
 app.use(express.urlencoded({ extended: true }));
 
-// View engine
 app.set("view engine", "ejs");
 app.use(expressLayouts);
 app.set("layout", "layout");
 
-// Static assets
 app.use(express.static(path.join(__dirname, "public")));
 
 /* ============================================================
-   Load Static Site Data
+   Static Site Data
 ============================================================ */
 
 const dataPath = path.join(__dirname, "data.json");
 const siteData = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
 
 /* ============================================================
-   Routes — Core Pages
+   Routes
 ============================================================ */
 
 app.get("/", (req, res) => {
+  counter.visits += 1;
+  fs.writeFileSync(counterPath, JSON.stringify(counter, null, 2));
+
   res.render("home", {
     title: "Home",
+    visits: counter.visits,
   });
 });
 
@@ -85,7 +90,7 @@ app.get("/projects", (req, res) => {
 });
 
 /* ============================================================
-   Blog — LIST posts (READ from Cosmos)
+   Blog — LIST posts
 ============================================================ */
 
 app.get("/blog", async (req, res, next) => {
@@ -111,7 +116,7 @@ app.get("/blog", async (req, res, next) => {
 });
 
 /* ============================================================
-   Blog — NEW post form
+   Blog — New Post Form
 ============================================================ */
 
 app.get("/blog/new", (req, res) => {
@@ -121,29 +126,25 @@ app.get("/blog/new", (req, res) => {
 });
 
 /* ============================================================
-   Blog — CREATE post (WRITE to Cosmos)
-   🔑 THIS IS THE FIX FOR YOUR 404
+   Blog — Create Post
 ============================================================ */
 
 app.post("/blog/new", async (req, res, next) => {
   try {
     const { topic, body } = req.body;
 
-    // Basic validation
     if (!topic || !body) {
       return res.status(400).send("Topic and body are required");
     }
 
     const newPost = {
-      id: crypto.randomUUID(),   // Required by Cosmos
+      id: crypto.randomUUID(),
       topic,
       body,
       createdAt: new Date().toISOString(),
     };
 
     await container.items.create(newPost);
-
-    // After saving, go back to the blog list
     res.redirect("/blog");
   } catch (err) {
     console.error("===== COSMOS BLOG INSERT FAILED =====");
@@ -165,13 +166,11 @@ app.get("/health", (req, res) => {
    Error Handling
 ============================================================ */
 
-// 500 handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).render("500", { title: "Server Error" });
 });
 
-// 404 handler (last)
 app.use((req, res) => {
   res.status(404).render("404", { title: "Page Not Found" });
 });
