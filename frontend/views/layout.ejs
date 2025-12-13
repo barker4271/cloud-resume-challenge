@@ -2,35 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title><%= title || "Wookietoast" %></title>
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Block search engines -->
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="googlebot" content="noindex, nofollow">
-
-  <title><%= title %></title>
-
-  <!-- Inter font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="/style.css">
 </head>
-<body>
-  <div class="container">
-    <aside class="sidebar">
-      <ul>
-        <li><a href="/" class="<%= title === 'Home' ? 'active' : '' %>">Home</a></li>
-        <li><a href="/resume" class="<%= title === 'Resume' ? 'active' : '' %>">Resume</a></li>
-        <li><a href="/projects" class="<%= title === 'Projects' ? 'active' : '' %>">Projects</a></li>
-        <li><a href="/blog" class="<%= title === 'Blog' ? 'active' : '' %>">Blog</a></li>
-      </ul>
-    </aside>
 
-    <main class="content">
-      <%- body %>
-    </main>
-  </div>
+<body style="
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #121212;
+  color: #f5f5f5;
+">
+
+  <header style="
+    background: #1f1f1f;
+    padding: 15px 20px;
+  ">
+    <nav style="
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      gap: 20px;
+    ">
+      <a href="/" style="color:#fff; text-decoration:none;">Home</a>
+      <a href="/resume" style="color:#fff; text-decoration:none;">Resume</a>
+      <a href="/projects" style="color:#fff; text-decoration:none;">Projects</a>
+      <a href="/blog" style="color:#fff; text-decoration:none;">Blog</a>
+    </nav>
+  </header>
+
+  <main style="
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  ">
+    <%- body %>
+  </main>
+
+  <footer style="
+    text-align: center;
+    padding: 20px;
+    color: #777;
+  ">
+    © <%= new Date().getFullYear() %> Wookietoast
+  </footer>
+
 </body>
 </html>
