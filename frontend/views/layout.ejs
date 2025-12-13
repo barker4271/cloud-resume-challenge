@@ -1,29 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title><%= title || "Wookietoast" %></title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Existing site styles -->
-  <link rel="stylesheet" href="/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Main site stylesheet -->
+  <link rel="stylesheet" href="/style.css" />
 </head>
 
 <body>
 
-  <!-- Layout wrapper REQUIRED by existing CSS -->
-  <div class="layout">
+  <!-- Overall page container -->
+  <div class="container">
 
     <!-- Sidebar navigation -->
     <aside class="sidebar">
-      <h1 class="site-title">Wookietoast</h1>
-
-      <nav class="nav-links">
-        <a href="/">Home</a>
-        <a href="/resume">Resume</a>
-        <a href="/projects">Projects</a>
-        <a href="/blog">Blog</a>
-      </nav>
+      <ul>
+        <li><a href="/" class="<%= title === 'Home' ? 'active' : '' %>">Home</a></li>
+        <li><a href="/resume" class="<%= title === 'Resume' ? 'active' : '' %>">Resume</a></li>
+        <li><a href="/projects" class="<%= title === 'Projects' ? 'active' : '' %>">Projects</a></li>
+        <li><a href="/blog" class="<%= title === 'Blog' ? 'active' : '' %>">Blog</a></li>
+      </ul>
     </aside>
 
     <!-- Main content area -->
