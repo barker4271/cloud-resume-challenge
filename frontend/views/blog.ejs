@@ -1,96 +1,39 @@
-<%--
-  blog.ejs
+<!-- views/blog.ejs -->
+<section class="content">
 
-  Purpose:
-  - Display blog posts fetched from Azure Cosmos DB
-  - Provide a button to create a new post
+  <h1>Blog</h1>
 
-  Data provided by server.js:
-    title   : string
-    posts   : array (may be empty)
-    message : optional string
-
-  IMPORTANT:
-  - DO NOT include layout manually
-  - express-ejs-layouts injects this into <%- body %>
---%>
-
-<section style="
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 40px 20px;
-">
-
-  <h1 style="text-align: center; margin-bottom: 10px;">
-    Blog
-  </h1>
-
-  <p style="text-align: center; color: #aaa; margin-bottom: 30px;">
-    Notes from the journey.
+  <p>
+    Thoughts, notes, and experiments from the Wookiee engineering desk.
   </p>
 
-  <div style="text-align: center; margin-bottom: 40px;">
-    <a href="/blog/new"
-       style="
-         padding: 10px 20px;
-         background: #1976d2;
-         color: white;
-         text-decoration: none;
-         border-radius: 6px;
-       ">
-      + New Blog Post
+  <p style="margin-bottom: 30px;">
+    <a href="/blog/new" class="button">
+      + Add New Blog Post
     </a>
-  </div>
-
-  <% if (message) { %>
-    <div style="
-      background: #332;
-      color: #ffeb3b;
-      padding: 15px;
-      border-radius: 6px;
-      margin-bottom: 30px;
-      text-align: center;
-    ">
-      <%= message %>
-    </div>
-  <% } %>
+  </p>
 
   <% if (!posts || posts.length === 0) { %>
-
-    <p style="text-align: center; color: #888;">
-      No blog posts yet.
-    </p>
-
+    <p>No blog posts yet. Be the first to post!</p>
   <% } else { %>
 
-    <% posts.forEach(function(post) { %>
+    <ul class="blog-list">
+      <% posts.forEach(post => { %>
 
-      <article style="
-        background: #1e1e1e;
-        padding: 25px;
-        border-radius: 8px;
-        margin-bottom: 25px;
-      ">
+        <li class="blog-post">
+          <h2><%= post.topic %></h2>
 
-        <h2 style="margin-top: 0; color: #ffee58;">
-          <%= post.topic %>
-        </h2>
+          <small>
+            <%= new Date(post.createdAt).toLocaleString() %>
+          </small>
 
-        <p style="font-size: 0.9rem; color: #aaa;">
-          Posted on <%= new Date(post.createdAt).toLocaleString() %>
-        </p>
+          <p>
+            <%= post.body %>
+          </p>
+        </li>
 
-        <div style="
-          margin-top: 15px;
-          line-height: 1.6;
-          white-space: pre-wrap;
-        ">
-          <%= post.body %>
-        </div>
-
-      </article>
-
-    <% }); %>
+      <% }) %>
+    </ul>
 
   <% } %>
 
