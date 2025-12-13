@@ -1,130 +1,85 @@
-<%-
-/*
-  Blog Post Creation Page
-  =======================
+<section class="content">
+  <h1>Add a New Blog Post</h1>
 
-  This page renders a simple form that allows a user to create
-  a new blog post. The form submits via POST to /blog/new.
+  <p>
+    Use the form below to create a new blog entry.
+  </p>
 
-  Fields:
-  - topic (string)
-  - body (string)
+  <!-- Blog creation form -->
+  <!-- This POSTs to /blog/new, which server.js will handle -->
+  <form method="POST" action="/blog/new">
 
-  The server will:
-  - add createdAt
-  - generate an id
-  - store the document in Cosmos DB
-
-  NOTE:
-  -----
-  This file ONLY handles presentation.
-  There is NO database logic here.
-*/
--%>
-
-<section style="
-  max-width: 800px;
-  margin: 60px auto;
-  padding: 40px;
-  background: #121212;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.4);
-  color: #f5f5f5;
-">
-
-  <h1 style="
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 2.5rem;
-    color: #90caf9;
-  ">
-    ✍️ New Blog Post
-  </h1>
-
-  <form action="/blog/new" method="POST">
-
-    <!-- Blog Topic -->
-    <div style="margin-bottom: 25px;">
-      <label for="topic" style="
-        display: block;
-        margin-bottom: 8px;
-        font-size: 1.1rem;
-        font-weight: bold;
-      ">
-        Topic
-      </label>
-
+    <!-- Blog topic -->
+    <div class="form-group">
+      <label for="topic">Topic</label>
       <input
         type="text"
         id="topic"
         name="topic"
         required
-        placeholder="e.g. Building This Site with Azure"
-        style="
-          width: 100%;
-          padding: 12px;
-          font-size: 1rem;
-          border-radius: 6px;
-          border: none;
-        "
+        placeholder="Enter blog topic"
       />
     </div>
 
-    <!-- Blog Body -->
-    <div style="margin-bottom: 30px;">
-      <label for="body" style="
-        display: block;
-        margin-bottom: 8px;
-        font-size: 1.1rem;
-        font-weight: bold;
-      ">
-        Blog Content
-      </label>
-
+    <!-- Blog body -->
+    <div class="form-group">
+      <label for="body">Body</label>
       <textarea
         id="body"
         name="body"
-        rows="10"
+        rows="8"
         required
-        placeholder="Write your thoughts here..."
-        style="
-          width: 100%;
-          padding: 12px;
-          font-size: 1rem;
-          border-radius: 6px;
-          border: none;
-          resize: vertical;
-        "
+        placeholder="Write your blog post here..."
       ></textarea>
     </div>
 
-    <!-- Actions -->
-    <div style="display: flex; justify-content: space-between;">
+    <!-- Submit button -->
+    <button type="submit" class="btn">
+      💾 Save Blog Post
+    </button>
 
-      <a href="/blog" style="
-        padding: 12px 20px;
-        background: #424242;
-        color: white;
-        text-decoration: none;
-        border-radius: 6px;
-      ">
-        ← Back to Blog
-      </a>
-
-      <button type="submit" style="
-        padding: 12px 25px;
-        background: #1976d2;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 1.1rem;
-        cursor: pointer;
-      ">
-        Publish Post
-      </button>
-
-    </div>
-
+    <!-- Cancel / Back link -->
+    <p style="margin-top: 20px;">
+      <a href="/blog">← Back to Blog</a>
+    </p>
   </form>
-
 </section>
+
+<style>
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    max-width: 600px;
+    padding: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 1rem;
+    background: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    background: #125aa0;
+  }
+</style>
