@@ -2,19 +2,15 @@
  * server.js
  * =========
  *
- * Main Express application entry point.
+ * Main Express application for wookietoast.com
  *
- * Responsibilities:
- * - Configure Express
- * - Configure EJS + layouts
- * - Serve static assets
- * - Define routes
- * - Connect to Azure Cosmos DB
+ * Responsibilities in THIS STEP:
+ * -------------------------------
+ * 1. Connect to Azure Cosmos DB
+ * 2. Read blog posts from Cosmos
+ * 3. Render blog.ejs using database data
  *
- * NOTE:
- * -----
- * This file is intentionally verbose and heavily commented
- * to make the control flow easy to understand.
+ * We DO NOT create blog posts yet — that comes next.
  */
 
 const express = require('express');
@@ -22,93 +18,68 @@ const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const fs = require('fs');
 
-/**
- * Azure Cosmos DB SDK
- * ------------------
- * This client allows us to:
- * - connect to Cosmos
- * - read/write documents
- */
+// Azure Cosmos DB SDK
 const { CosmosClient } = require('@azure/cosmos');
 
 const app = express();
-
-/**
- * Azure App Service injects PORT automatically.
- * Locally, we fall back to 3000.
- */
 const PORT = process.env.PORT || 3000;
 
-/* ============================================================
-   COSMOS DB CONFIGURATION
-   ============================================================ */
+/* ------------------------------------------------------------------
+   AZURE COSMOS DB CONFIGURATION
+   ------------------------------------------------------------------ */
 
 /**
- * These values come from Azure App Service → Configuration
+ * These values come from Azure App Service → Configuration → App Settings
  *
- * DO NOT hard-code secrets.
+ * NEVER hardcode secrets.
  */
 const COSMOS_ENDPOINT = process.env.COSMOS_ENDPOINT;
 const COSMOS_KEY = process.env.COSMOS_KEY;
 
-/**
- * These names must match what you created via Bicep.
- */
-const COSMOS_DATABASE_NAME = 'wookieblog';
-const COSMOS_CONTAINER_NAME = 'wookiecontainer';
+const DATABASE_NAME = 'wookieblog';
+const CONTAINER_NAME = 'wookiecontainer';
 
-/**
- * Create the Cosmos client.
- * This does NOT connect immediately — connections are lazy.
- */
+// Create Cosmos client
 const cosmosClient = new CosmosClient({
   endpoint: COSMOS_ENDPOINT,
   key: COSMOS_KEY
 });
 
-/**
- * Get references to the database and container.
- * These objects are lightweight handles.
- */
-const database = cosmosClient.database(COSMOS_DATABASE_NAME);
-const container = database.container(COSMOS_CONTAINER_NAME);
+// Get database + container references
+const database = cosmosClient.database(DATABASE_NAME);
+const container = database.container(CONTAINER_NAME);
 
-/* ============================================================
-   EXPRESS + VIEW ENGINE SETUP
-   ============================================================ */
+/* ------------------------------------------------------------------
+   LOCAL FILE-BASED CONTENT (non-blog)
+   ------------------------------------------------------------------ */
 
-/**
- * Enable parsing of form POST bodies
- * (needed for blog creation form)
- */
-app.use(express.urlencoded({ extended: true }));
+// Counter (local file — fine for this project)
+const counterPath = path.join(__dirname, 'counter.json');
+let counter = JSON.parse(fs.readFileSync(counterPath, 'utf-8'));
 
-/**
- * View engine: EJS
- */
+// Static site data (resume, projects)
+const dataPath = path.join(__dirname, 'data.json');
+const siteData = JSON.parse(fs.readFileSync(dataPath));
+
+/* ------------------------------------------------------------------
+   EXPRESS CONFIGURATION
+   ------------------------------------------------------------------ */
+
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
 app.set('layout', 'layout');
 
-/**
- * Static files (CSS, images, JS)
- */
+// Static assets (CSS, images, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-/* ============================================================
-   LOCAL FILE-BASED CONTENT (existing functionality)
-   ============================================================ */
+// Parse form submissions (needed later for blog creation)
+app.use(express.urlencoded({ extended: true }));
 
-const counterPath = path.join(__dirname, 'counter.json');
-let counter = JSON.parse(fs.readFileSync(counterPath, 'utf-8'));
+/* ------------------------------------------------------------------
+   ROUTES
+   ------------------------------------------------------------------ */
 
-const dataPath = path.join(__dirname, 'data.json');
-const siteData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-
-/* ============================================================
-   ROUTES — EXISTING PAGES
-   ============================================================ */
-
+// HOME PAGE
 app.get('/', (req, res) => {
   counter.visits += 1;
   fs.writeFileSync(counterPath, JSON.stringify(counter, null, 2));
@@ -119,6 +90,7 @@ app.get('/', (req, res) => {
   });
 });
 
+// RESUME PAGE
 app.get('/resume', (req, res) => {
   res.render('resume', {
     title: 'Resume',
@@ -126,6 +98,7 @@ app.get('/resume', (req, res) => {
   });
 });
 
+// PROJECTS PAGE
 app.get('/projects', (req, res) => {
   res.render('projects', {
     title: 'Projects',
@@ -133,114 +106,73 @@ app.get('/projects', (req, res) => {
   });
 });
 
-app.get('/blog', (req, res) => {
-  /**
-   * For now, this page remains unchanged.
-   * Step 5 will replace this with Cosmos-backed data.
-   */
-  res.render('blog', {
-    title: 'Blog',
-    blog: siteData.blog
-  });
+/* ------------------------------------------------------------------
+   BLOG PAGE — READ FROM COSMOS DB
+   ------------------------------------------------------------------ */
+
+app.get('/blog', async (req, res, next) => {
+  try {
+    /**
+     * SQL-style query against Cosmos DB
+     * ---------------------------------
+     * ORDER BY createdAt DESC ensures newest posts appear first
+     */
+    const querySpec = {
+      query: 'SELECT * FROM c ORDER BY c.createdAt DESC'
+    };
+
+    // Execute query
+    const { resources: posts } = await container.items
+      .query(querySpec)
+      .fetchAll();
+
+    res.render('blog', {
+      title: 'Blog',
+      posts: posts
+    });
+
+  } catch (err) {
+    // Pass errors to the 500 handler
+    next(err);
+  }
 });
 
-/* ============================================================
-   ROUTES — BLOG CREATION (NEW)
-   ============================================================ */
+/* ------------------------------------------------------------------
+   PLACEHOLDER: CREATE BLOG PAGE (NEXT STEP)
+   ------------------------------------------------------------------ */
 
-/**
- * GET /blog/new
- * -------------
- * Renders the form that allows a user to create a new blog post.
- */
 app.get('/blog/new', (req, res) => {
   res.render('blog-new', {
     title: 'New Blog Post'
   });
 });
 
-/**
- * POST /blog/new
- * --------------
- * Accepts form submission and writes a document to Cosmos DB.
- */
-app.post('/blog/new', async (req, res, next) => {
-  try {
-    /**
-     * Extract fields from the submitted form.
-     */
-    const { topic, body } = req.body;
-
-    /**
-     * Basic server-side validation.
-     */
-    if (!topic || !body) {
-      return res.status(400).send('Topic and body are required.');
-    }
-
-    /**
-     * Construct the blog post document.
-     *
-     * Cosmos DB requires:
-     * - an `id` field (string)
-     * - partition key value (`topic` in our case)
-     */
-    const blogPost = {
-      id: Date.now().toString(),        // simple unique ID
-      topic: topic,
-      body: body,
-      createdAt: new Date().toISOString()
-    };
-
-    /**
-     * Insert document into Cosmos DB.
-     */
-    await container.items.create(blogPost);
-
-    /**
-     * Redirect back to the blog page.
-     * (Later this page will read from Cosmos DB)
-     */
-    res.redirect('/blog');
-
-  } catch (error) {
-    /**
-     * Any error here goes to the 500 handler.
-     */
-    next(error);
-  }
-});
-
-/* ============================================================
-   HEALTH CHECK
-   ============================================================ */
+/* ------------------------------------------------------------------
+   HEALTH CHECK (used by Azure / Front Door)
+   ------------------------------------------------------------------ */
 
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
 
-/* ============================================================
+/* ------------------------------------------------------------------
    ERROR HANDLING
-   ============================================================ */
+   ------------------------------------------------------------------ */
 
-/**
- * 500 — Server error
- */
+// 500 — Server Errors
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Server error:', err);
   res.status(500).render('500', { title: 'Server Error' });
 });
 
-/**
- * 404 — Must be LAST
- */
+// 404 — Not Found (must be LAST)
 app.use((req, res) => {
   res.status(404).render('404', { title: 'Page Not Found' });
 });
 
-/* ============================================================
+/* ------------------------------------------------------------------
    START SERVER
-   ============================================================ */
+   ------------------------------------------------------------------ */
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

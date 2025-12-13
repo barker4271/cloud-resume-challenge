@@ -1,14 +1,117 @@
-<h1 class="page-title">Blog</h1>
+<%--
+  blog.ejs
+  =========
 
-<!-- Blog content.  Loaded from data.json for now, eventually will include a link to a page for creating blog posts, storing then in a DB, the loading them from there -->
+  Purpose:
+  --------
+  Display all blog posts stored in Azure Cosmos DB.
 
-<div class="card">
-  <p class="lead">Thoughts, ideas, and lessons learned as I explore new technologies and build new things.</p>
-</div>
+  Data expected from server.js:
+  -----------------------------
+  posts: [
+    {
+      id: string,
+      topic: string,
+      body: string,
+      createdAt: ISO string
+    }
+  ]
 
-<% blog.forEach(post => { %>
-  <div class="card blog-post">
-    <h2><%= post.title %></h2>
-    <p><%= post.content %></p>
-  </div>
-<% }) %>
+  This page also provides a button to create a new blog post.
+--%>
+
+<section style="
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+">
+
+  <!-- Page Header -->
+  <header style="margin-bottom: 40px;">
+    <h1 style="font-size: 2.8rem; margin-bottom: 10px;">
+      Blog
+    </h1>
+
+    <p style="font-size: 1.2rem; color: #ccc;">
+      Occasional thoughts from the Wookiee cave.
+    </p>
+
+    <!-- New Blog Post Button -->
+    <div style="margin-top: 20px;">
+      <a href="/blog/new"
+         style="
+           display: inline-block;
+           padding: 10px 20px;
+           background: #1976d2;
+           color: white;
+           text-decoration: none;
+           border-radius: 6px;
+           font-size: 1rem;
+         ">
+        + New Blog Post
+      </a>
+    </div>
+  </header>
+
+  <!-- Blog Posts List -->
+  <% if (!posts || posts.length === 0) { %>
+
+    <!-- Empty State -->
+    <div style="
+      padding: 40px;
+      text-align: center;
+      border: 1px dashed #555;
+      border-radius: 10px;
+      color: #aaa;
+    ">
+      <h2 style="margin-bottom: 10px;">No blog posts yet</h2>
+      <p>
+        The archives are empty… for now.
+      </p>
+    </div>
+
+  <% } else { %>
+
+    <!-- Render Each Blog Post -->
+    <% posts.forEach(post => { %>
+
+      <article style="
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid #444;
+      ">
+
+        <!-- Blog Topic -->
+        <h2 style="
+          font-size: 1.9rem;
+          margin-bottom: 5px;
+        ">
+          <%= post.topic %>
+        </h2>
+
+        <!-- Timestamp -->
+        <p style="
+          font-size: 0.9rem;
+          color: #999;
+          margin-bottom: 15px;
+        ">
+          Posted on
+          <%= new Date(post.createdAt).toLocaleString() %>
+        </p>
+
+        <!-- Blog Body -->
+        <div style="
+          font-size: 1.1rem;
+          line-height: 1.6;
+          white-space: pre-wrap;
+        ">
+          <%= post.body %>
+        </div>
+
+      </article>
+
+    <% }) %>
+
+  <% } %>
+
+</section>
