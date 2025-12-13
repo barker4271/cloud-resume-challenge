@@ -2,50 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+
+  <!-- Page title passed in from each route -->
   <title><%= title || "Wookietoast" %></title>
 
+  <!-- Responsive layout -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- Main site stylesheet (this restores your original look) -->
   <link rel="stylesheet" href="/style.css">
 </head>
 
-<body style="
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #121212;
-  color: #f5f5f5;
-">
+<body>
 
-  <header style="
-    background: #1f1f1f;
-    padding: 15px 20px;
-  ">
-    <nav style="
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      gap: 20px;
-    ">
-      <a href="/" style="color:#fff; text-decoration:none;">Home</a>
-      <a href="/resume" style="color:#fff; text-decoration:none;">Resume</a>
-      <a href="/projects" style="color:#fff; text-decoration:none;">Projects</a>
-      <a href="/blog" style="color:#fff; text-decoration:none;">Blog</a>
+  <!-- Site header / navigation -->
+  <header class="site-header">
+    <nav class="site-nav">
+      <a href="/">Home</a>
+      <a href="/resume">Resume</a>
+      <a href="/projects">Projects</a>
+      <a href="/blog">Blog</a>
     </nav>
   </header>
 
-  <main style="
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-  ">
+  <!-- Main content area -->
+  <main class="site-content">
+    <!-- This is where each page's EJS content is injected -->
     <%- body %>
   </main>
 
-  <footer style="
-    text-align: center;
-    padding: 20px;
-    color: #777;
-  ">
+  <!-- Footer -->
+  <footer class="site-footer">
     © <%= new Date().getFullYear() %> Wookietoast
   </footer>
 
