@@ -1,181 +1,195 @@
 /**
  * server.js
- * =========
  *
  * Main Express application for wookietoast.com
- *
- * Responsibilities in THIS STEP:
- * -------------------------------
- * 1. Connect to Azure Cosmos DB
- * 2. Read blog posts from Cosmos
- * 3. Render blog.ejs using database data
- *
- * We DO NOT create blog posts yet — that comes next.
+ * - Serves static pages
+ * - Renders EJS views
+ * - Stores and retrieves blog posts from Azure Cosmos DB
  */
 
-const express = require('express');
-const path = require('path');
-const expressLayouts = require('express-ejs-layouts');
-const fs = require('fs');
+const express = require("express");
+const path = require("path");
+const expressLayouts = require("express-ejs-layouts");
+const fs = require("fs");
 
 // Azure Cosmos DB SDK
-const { CosmosClient } = require('@azure/cosmos');
+const { CosmosClient } = require("@azure/cosmos");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 /* ------------------------------------------------------------------
-   AZURE COSMOS DB CONFIGURATION
+   Cosmos DB Configuration
    ------------------------------------------------------------------ */
 
-/**
- * These values come from Azure App Service → Configuration → App Settings
- *
- * NEVER hardcode secrets.
- */
+// These MUST exist as App Settings in Azure
 const COSMOS_ENDPOINT = process.env.COSMOS_ENDPOINT;
 const COSMOS_KEY = process.env.COSMOS_KEY;
 
-const DATABASE_NAME = 'wookieblog';
-const CONTAINER_NAME = 'wookiecontainer';
+// Names MUST match exactly what you deployed via Bicep
+const COSMOS_DATABASE_NAME = "wookieblog";
+const COSMOS_CONTAINER_NAME = "wookiecontainer";
 
-// Create Cosmos client
+// Create Cosmos client (does NOT make a network call yet)
 const cosmosClient = new CosmosClient({
   endpoint: COSMOS_ENDPOINT,
   key: COSMOS_KEY
 });
 
 // Get database + container references
-const database = cosmosClient.database(DATABASE_NAME);
-const container = database.container(CONTAINER_NAME);
+const database = cosmosClient.database(COSMOS_DATABASE_NAME);
+const container = database.container(COSMOS_CONTAINER_NAME);
 
 /* ------------------------------------------------------------------
-   LOCAL FILE-BASED CONTENT (non-blog)
+   Local Counter (file-based)
    ------------------------------------------------------------------ */
 
-// Counter (local file — fine for this project)
-const counterPath = path.join(__dirname, 'counter.json');
-let counter = JSON.parse(fs.readFileSync(counterPath, 'utf-8'));
-
-// Static site data (resume, projects)
-const dataPath = path.join(__dirname, 'data.json');
-const siteData = JSON.parse(fs.readFileSync(dataPath));
+const counterPath = path.join(__dirname, "counter.json");
+let counter = JSON.parse(fs.readFileSync(counterPath, "utf-8"));
 
 /* ------------------------------------------------------------------
-   EXPRESS CONFIGURATION
+   Express + EJS Setup
    ------------------------------------------------------------------ */
 
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 app.use(expressLayouts);
-app.set('layout', 'layout');
+app.set("layout", "layout");
 
-// Static assets (CSS, images, JS)
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files from /public
+app.use(express.static(path.join(__dirname, "public")));
 
-// Parse form submissions (needed later for blog creation)
+// Parse form submissions
 app.use(express.urlencoded({ extended: true }));
 
 /* ------------------------------------------------------------------
-   ROUTES
+   Load static site data
    ------------------------------------------------------------------ */
 
-// HOME PAGE
-app.get('/', (req, res) => {
+const dataPath = path.join(__dirname, "data.json");
+const rawData = fs.readFileSync(dataPath);
+const siteData = JSON.parse(rawData);
+
+/* ------------------------------------------------------------------
+   Routes
+   ------------------------------------------------------------------ */
+
+// Home
+app.get("/", (req, res) => {
   counter.visits += 1;
   fs.writeFileSync(counterPath, JSON.stringify(counter, null, 2));
 
-  res.render('home', {
-    title: 'Home',
+  res.render("home", {
+    title: "Home",
     visits: counter.visits
   });
 });
 
-// RESUME PAGE
-app.get('/resume', (req, res) => {
-  res.render('resume', {
-    title: 'Resume',
+// Resume
+app.get("/resume", (req, res) => {
+  res.render("resume", {
+    title: "Resume",
     resume: siteData.resume
   });
 });
 
-// PROJECTS PAGE
-app.get('/projects', (req, res) => {
-  res.render('projects', {
-    title: 'Projects',
+// Projects
+app.get("/projects", (req, res) => {
+  res.render("projects", {
+    title: "Projects",
     projects: siteData.projects
   });
 });
 
 /* ------------------------------------------------------------------
-   BLOG PAGE — READ FROM COSMOS DB
+   BLOG ROUTES (Cosmos-backed)
    ------------------------------------------------------------------ */
 
-app.get('/blog', async (req, res, next) => {
+// View blog posts
+app.get("/blog", async (req, res, next) => {
   try {
-    /**
-     * SQL-style query against Cosmos DB
-     * ---------------------------------
-     * ORDER BY createdAt DESC ensures newest posts appear first
-     */
+    // Intentionally simple query for debugging
+    // (ORDER BY will be reintroduced once confirmed working)
     const querySpec = {
-    query: "SELECT * FROM c"
+      query: "SELECT * FROM c"
     };
 
-
-    // Execute query
     const { resources: posts } = await container.items
-    .query(querySpec, {
-      enableCrossPartitionQuery: true
-   })
-    .fetchAll();
+      .query(querySpec, { enableCrossPartitionQuery: true })
+      .fetchAll();
 
-
-    res.render('blog', {
-      title: 'Blog',
-      posts: posts
+    res.render("blog", {
+      title: "Blog",
+      posts
     });
 
   } catch (err) {
-    // Pass errors to the 500 handler
+    // VERY IMPORTANT: log everything Cosmos gives us
+    console.error("===== COSMOS BLOG QUERY FAILED =====");
+    console.error("Message:", err.message);
+    console.error("Code:", err.code);
+    console.error("Body:", err.body);
+    console.error("===================================");
+
+    next(err); // pass to 500 handler
+  }
+});
+
+// New blog post form
+app.get("/blog/new", (req, res) => {
+  res.render("blog-new", {
+    title: "New Blog Post"
+  });
+});
+
+// Handle blog post submission
+app.post("/blog", async (req, res, next) => {
+  try {
+    const { topic, body } = req.body;
+
+    const newPost = {
+      id: Date.now().toString(),          // required by Cosmos
+      topic,                              // partition key
+      body,
+      createdAt: new Date().toISOString()
+    };
+
+    await container.items.create(newPost);
+
+    res.redirect("/blog");
+
+  } catch (err) {
+    console.error("===== COSMOS BLOG INSERT FAILED =====");
+    console.error("Message:", err.message);
+    console.error("Code:", err.code);
+    console.error("Body:", err.body);
+    console.error("====================================");
+
     next(err);
   }
 });
 
-/* ------------------------------------------------------------------
-   PLACEHOLDER: CREATE BLOG PAGE (NEXT STEP)
-   ------------------------------------------------------------------ */
-
-app.get('/blog/new', (req, res) => {
-  res.render('blog-new', {
-    title: 'New Blog Post'
-  });
+// Health check (used by App Service)
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
 });
 
 /* ------------------------------------------------------------------
-   HEALTH CHECK (used by Azure / Front Door)
+   Error Handling
    ------------------------------------------------------------------ */
 
-app.get('/health', (req, res) => {
-  res.status(200).send('OK');
-});
-
-/* ------------------------------------------------------------------
-   ERROR HANDLING
-   ------------------------------------------------------------------ */
-
-// 500 — Server Errors
+// 500 handler
 app.use((err, req, res, next) => {
-  console.error('Server error:', err);
-  res.status(500).render('500', { title: 'Server Error' });
+  console.error(err.stack);
+  res.status(500).render("500", { title: "Server Error" });
 });
 
-// 404 — Not Found (must be LAST)
+// 404 handler (must be last)
 app.use((req, res) => {
-  res.status(404).render('404', { title: 'Page Not Found' });
+  res.status(404).render("404", { title: "Page Not Found" });
 });
 
 /* ------------------------------------------------------------------
-   START SERVER
+   Start Server
    ------------------------------------------------------------------ */
 
 app.listen(PORT, () => {
