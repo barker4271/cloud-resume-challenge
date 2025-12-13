@@ -1,73 +1,136 @@
-<section class="content">
-  <h1>Blog</h1>
+<%--
+  blog.ejs
 
-  <!-- Button to create a new blog post -->
-  <p>
-    <a href="/blog/new" class="btn">
-      ➕ Add New Blog Post
+  This page displays all blog posts loaded from Azure Cosmos DB.
+
+  Data passed in from server.js:
+    - title   : string
+    - posts   : array of blog post objects
+    - message : optional string (shown when Cosmos is not configured)
+
+  Blog post object structure (from Cosmos):
+    {
+      id: string,
+      createdAt: ISO date string,
+      topic: string,
+      body: string
+    }
+
+  IMPORTANT:
+  - express-ejs-layouts automatically injects this content
+    into <%- body %> in layout.ejs
+  - DO NOT include layout manually here
+--%>
+
+<section class="blog-page" style="
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+">
+
+  <!-- Page Header -->
+  <header style="margin-bottom: 30px; text-align: center;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 10px;">
+      Blog
+    </h1>
+
+    <p style="color: #ccc;">
+      Thoughts, experiments, and notes from the journey.
+    </p>
+
+    <!-- New Blog Post Button -->
+    <a href="/blog/new"
+       style="
+         display: inline-block;
+         margin-top: 20px;
+         padding: 10px 20px;
+         background: #1976d2;
+         color: #fff;
+         text-decoration: none;
+         border-radius: 6px;
+         font-size: 1rem;
+       ">
+      + New Blog Post
     </a>
-  </p>
+  </header>
 
-  <!-- If no blog posts exist -->
+  <!-- Optional system message (e.g., Cosmos not configured) -->
+  <% if (message) { %>
+    <div style="
+      background: #332;
+      color: #ffeb3b;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 30px;
+      text-align: center;
+    ">
+      <%= message %>
+    </div>
+  <% } %>
+
+  <!-- Blog Posts List -->
   <% if (!posts || posts.length === 0) { %>
-    <p>No blog posts yet. Be the first to write one!</p>
+
+    <!-- Empty State -->
+    <div style="
+      text-align: center;
+      color: #aaa;
+      margin-top: 60px;
+    ">
+      <p style="font-size: 1.2rem;">
+        No blog posts yet.
+      </p>
+      <p>
+        Be the first to add one.
+      </p>
+    </div>
+
   <% } else { %>
 
-    <!-- Blog post list -->
-    <ul class="blog-list">
-      <% posts.forEach(function(post) { %>
-        <li class="blog-item">
-          <h3><%= post.topic %></h3>
+    <!-- Render each blog post -->
+    <% posts.forEach(function(post) { %>
 
-          <p class="blog-meta">
-            <em>
-              Posted on
-              <%= new Date(post.createdAt).toLocaleString() %>
-            </em>
-          </p>
+      <article style="
+        background: #1e1e1e;
+        padding: 25px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      ">
 
-          <p class="blog-body">
-            <%= post.body %>
-          </p>
-        </li>
-      <% }); %>
-    </ul>
+        <!-- Topic -->
+        <h2 style="
+          margin-top: 0;
+          margin-bottom: 10px;
+          color: #ffee58;
+        ">
+          <%= post.topic %>
+        </h2>
+
+        <!-- Created Date -->
+        <div style="
+          font-size: 0.9rem;
+          color: #aaa;
+          margin-bottom: 15px;
+        ">
+          Posted on
+          <%= new Date(post.createdAt).toLocaleString() %>
+        </div>
+
+        <!-- Body -->
+        <div style="
+          font-size: 1.05rem;
+          line-height: 1.6;
+          color: #e0e0e0;
+          white-space: pre-wrap;
+        ">
+          <%= post.body %>
+        </div>
+
+      </article>
+
+    <% }); %>
 
   <% } %>
+
 </section>
-
-<style>
-  .blog-list {
-    list-style: none;
-    padding: 0;
-  }
-
-  .blog-item {
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #ddd;
-  }
-
-  .blog-meta {
-    color: #666;
-    font-size: 0.9rem;
-  }
-
-  .blog-body {
-    margin-top: 10px;
-    white-space: pre-wrap;
-  }
-
-  .btn {
-    display: inline-block;
-    padding: 8px 14px;
-    background: #1976d2;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-  }
-
-  .btn:hover {
-    background: #125aa0;
-  }
-</style>
