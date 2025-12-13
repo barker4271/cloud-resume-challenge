@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "@azure/cosmos": "^4.9.0"
+  },
+  "devDependencies": {
+    "ejs-lint": "^2.0.1"
   }
 }

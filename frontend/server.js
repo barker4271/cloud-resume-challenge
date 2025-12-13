@@ -104,28 +104,14 @@ app.get("/projects", (req, res) => {
    BLOG ROUTES (Cosmos DB)
    ------------------------------------------------------------------ */
 
-app.get("/blog", async (req, res, next) => {
-  try {
-    const querySpec = {
-      query: "SELECT * FROM c ORDER BY c.createdAt DESC"
-    };
-
-    const { resources: posts } = await container.items
-      .query(querySpec, { enableCrossPartitionQuery: true })
-      .fetchAll();
-
-    res.render("blog", {
-      title: "Blog",
-      posts
-    });
-
-  } catch (err) {
-    console.error("===== COSMOS BLOG QUERY FAILED =====");
-    console.error(err);
-    console.error("===================================");
-    next(err);
-  }
+app.get('/blog', async (req, res) => {
+  res.render('blog', {
+    layout: false,   // 🔑 disables layout.ejs completely
+    title: 'Blog',
+    posts: []
+  });
 });
+
 
 app.get("/blog/new", (req, res) => {
   res.render("blog-new", { title: "New Blog Post" });
