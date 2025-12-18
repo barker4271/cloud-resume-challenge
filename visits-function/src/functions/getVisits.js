@@ -1,10 +1,12 @@
-const { TableClient } = require("@azure/data-tables");
+
+import { app } from "@azure/functions";
+import { TableClient } from "@azure/data-tables";
 
 /**
  * HTTP-triggered Azure Function
  * Increments and returns the site visit counter
  */
-module.exports = async function (context, req) {
+export async function getVisits(context, req) {
   // These come from Function App configuration (NOT local.settings.json in Azure)
   const storageAccount = process.env.STORAGE_ACCOUNT_NAME;
   const storageKey = process.env.STORAGE_ACCOUNT_KEY;
@@ -73,4 +75,4 @@ module.exports = async function (context, req) {
       body: { error: "Visit counter error" }
     };
   }
-};
+}
