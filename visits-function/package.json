@@ -8,6 +8,7 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
+    "@azure/data-tables": "^13.3.2",
     "@azure/functions": "^4.0.0"
   },
   "devDependencies": {
