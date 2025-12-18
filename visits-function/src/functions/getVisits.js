@@ -1,4 +1,3 @@
-
 import { app } from "@azure/functions";
 import { TableClient } from "@azure/data-tables";
 
@@ -6,73 +5,73 @@ import { TableClient } from "@azure/data-tables";
  * HTTP-triggered Azure Function
  * Increments and returns the site visit counter
  */
-export async function getVisits(context, req) {
-  // These come from Function App configuration (NOT local.settings.json in Azure)
-  const storageAccount = process.env.STORAGE_ACCOUNT_NAME;
-  const storageKey = process.env.STORAGE_ACCOUNT_KEY;
+app.http("getVisits", {
+  methods: ["GET"],
+  authLevel: "anonymous",
+  handler: async (request, context) => {
+    context.log("getVisits function invoked");
 
-  if (!storageAccount || !storageKey) {
-    context.log.error("Storage credentials are missing");
-    context.res = {
-      status: 500,
-      body: { error: "Storage not configured" }
-    };
-    return;
-  }
+    const storageAccount = process.env.STORAGE_ACCOUNT_NAME;
+    const storageKey = process.env.STORAGE_ACCOUNT_KEY;
 
-  // Construct Table Storage connection
-  const tableClient = new TableClient(
-    `https://${storageAccount}.table.core.windows.net`,
-    "visits",
-    {
-      credential: {
-        accountName: storageAccount,
-        accountKey: storageKey
-      }
+    if (!storageAccount || !storageKey) {
+      context.log.error("Storage credentials are missing");
+      return {
+        status: 500,
+        jsonBody: { error: "Storage not configured" }
+      };
     }
-  );
 
-  const partitionKey = "counter";
-  const rowKey = "site";
+    const tableClient = new TableClient(
+      `https://${storageAccount}.table.core.windows.net`,
+      "visits",
+      {
+        credential: {
+          accountName: storageAccount,
+          accountKey: storageKey
+        }
+      }
+    );
 
-  try {
-    let entity;
-    let count;
+    const partitionKey = "counter";
+    const rowKey = "site";
 
     try {
-      // Try to read existing counter
-      entity = await tableClient.getEntity(partitionKey, rowKey);
-      count = entity.count + 1;
+      let count;
 
-      // Update existing entity
-      entity.count = count;
-      await tableClient.updateEntity(entity, "Replace");
+      try {
+        // Try to read existing counter
+        const entity = await tableClient.getEntity(partitionKey, rowKey);
+        count = entity.count + 1;
+
+        entity.count = count;
+        await tableClient.updateEntity(entity, "Replace");
+
+      } catch (err) {
+        if (err.statusCode === 404) {
+          // First visit
+          count = 1;
+          await tableClient.createEntity({
+            partitionKey,
+            rowKey,
+            count
+          });
+        } else {
+          throw err;
+        }
+      }
+
+      return {
+        status: 200,
+        jsonBody: { visits: count }
+      };
 
     } catch (err) {
-      if (err.statusCode === 404) {
-        // First visit — create the row
-        count = 1;
-        await tableClient.createEntity({
-          partitionKey,
-          rowKey,
-          count
-        });
-      } else {
-        throw err;
-      }
+      context.log.error("Visit counter failed", err);
+      return {
+        status: 500,
+        jsonBody: { error: "Visit counter error" }
+      };
     }
-
-    // Return the updated count
-    context.res = {
-      headers: { "Content-Type": "application/json" },
-      body: { visits: count }
-    };
-
-  } catch (err) {
-    context.log.error("Visit counter failed", err);
-    context.res = {
-      status: 500,
-      body: { error: "Visit counter error" }
-    };
   }
-}
+});
