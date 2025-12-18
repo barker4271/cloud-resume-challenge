@@ -1,17 +1,12 @@
 {
-  "name": "",
+  "name": "visits-function",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/functions/*.js",
+  "type": "module",
   "scripts": {
-    "start": "func start",
-    "test": "echo \"No tests yet...\""
+    "start": "func start"
   },
   "dependencies": {
-    "@azure/data-tables": "^13.3.2",
+    "@azure/data-tables": "^13.3.0",
     "@azure/functions": "^4.0.0"
-  },
-  "devDependencies": {
-    "azure-functions-core-tools": "^4.x"
   }
 }
