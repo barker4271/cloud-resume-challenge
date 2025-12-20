@@ -2,11 +2,8 @@
   "name": "visits-function",
   "version": "1.0.0",
   "type": "module",
-  "scripts": {
-    "start": "func start"
-  },
   "dependencies": {
-    "@azure/data-tables": "^13.3.0",
-    "@azure/functions": "^4.0.0"
+    "@azure/functions": "^4.0.0",
+    "@azure/data-tables": "^13.3.0"
   }
 }
