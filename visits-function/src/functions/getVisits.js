@@ -29,8 +29,7 @@ app.http("getVisits", {
 
     const partitionKey = "counter";
     const rowKey = "site";
-
-    let count = 0;
+    let count;
 
     try {
       try {
@@ -55,6 +54,7 @@ app.http("getVisits", {
         status: 200,
         jsonBody: { visits: count }
       };
+
     } catch (err) {
       context.log.error("Visit counter failed", err);
       return {
