@@ -9,7 +9,7 @@ app.http("getVisits", {
     const storageKey = process.env.STORAGE_ACCOUNT_KEY;
 
     if (!storageAccount || !storageKey) {
-      context.log.error("Storage credentials are missing");
+      context.log.error("Storage credentials missing");
       return {
         status: 500,
         jsonBody: { error: "Storage not configured" }
@@ -30,18 +30,14 @@ app.http("getVisits", {
     const partitionKey = "counter";
     const rowKey = "site";
 
-    try {
-      let count;
+    let count = 0;
 
+    try {
       try {
         const entity = await tableClient.getEntity(partitionKey, rowKey);
         count = entity.count + 1;
-
-        await tableClient.updateEntity(
-          { ...entity, count },
-          "Replace"
-        );
-
+        entity.count = count;
+        await tableClient.updateEntity(entity, "Replace");
       } catch (err) {
         if (err.statusCode === 404) {
           count = 1;
@@ -59,7 +55,6 @@ app.http("getVisits", {
         status: 200,
         jsonBody: { visits: count }
       };
-
     } catch (err) {
       context.log.error("Visit counter failed", err);
       return {
