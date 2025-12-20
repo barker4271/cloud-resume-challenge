@@ -1,15 +1,20 @@
 import { app } from "@azure/functions";
 import { TableClient } from "@azure/data-tables";
 
+/**
+ * HTTP-triggered Azure Function
+ * Increments and returns the site visit counter
+ */
 app.http("getVisits", {
   methods: ["GET"],
   authLevel: "anonymous",
   handler: async (request, context) => {
+
     const storageAccount = process.env.STORAGE_ACCOUNT_NAME;
     const storageKey = process.env.STORAGE_ACCOUNT_KEY;
 
     if (!storageAccount || !storageKey) {
-      context.log.error("Storage credentials missing");
+      context.log.error("Storage credentials are missing");
       return {
         status: 500,
         jsonBody: { error: "Storage not configured" }
@@ -29,9 +34,10 @@ app.http("getVisits", {
 
     const partitionKey = "counter";
     const rowKey = "site";
-    let count;
 
     try {
+      let count;
+
       try {
         const entity = await tableClient.getEntity(partitionKey, rowKey);
         count = entity.count + 1;
