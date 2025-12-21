@@ -5,7 +5,7 @@
     Welcome to my personal site. Use the navigation menu on the left to explore my resume, projects, and blog.
   </p>
   <p>
-    This site is built using <strong>Node.js</strong>, <strong>Express</strong>, and <strong>EJS templates</strong>, 
+    This site is built using <strong>Node.js</strong>, <strong>Express</strong>, and <strong>EJS templates</strong>,
     and styled with a clean, modern layout inspired by professional design systems.
   </p>
   <p>
@@ -14,8 +14,6 @@
   <p>
     As I learn more the application will be packaged and deployed to the cloud using a CI/CD pipeline.
   </p>
-
-
 </div>
 
 <div class="card">
@@ -29,7 +27,47 @@
 
 <div class="card">
   <p>
-    This site has been visited <strong><%= visits %></strong> times.
+    This site has been visited
+    <strong><span id="visit-count">loading…</span></strong>
+    times.
   </p>
 </div>
 
+<!--
+  Visit Counter Script
+  --------------------
+  This script:
+  - Calls the Azure Function via HTTP
+  - Updates the visit count dynamically
+  - Does NOT block page rendering
+  - Fails gracefully if the function is unavailable
+-->
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const counterEl = document.getElementById("visit-count");
+
+    try {
+      const response = await fetch(
+        "https://wookietoast-visits-func.azurewebsites.net/api/getvisits",
+        { method: "GET" }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (typeof data.visits === "number") {
+        counterEl.textContent = data.visits;
+      } else {
+        counterEl.textContent = "—";
+        console.warn("Unexpected response shape:", data);
+      }
+
+    } catch (err) {
+      console.error("Visit counter failed:", err);
+      counterEl.textContent = "—";
+    }
+  });
+</script>
