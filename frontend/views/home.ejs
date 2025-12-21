@@ -28,23 +28,23 @@
 <div class="card">
   <p>
     This site has been visited
-    <strong><span id="visit-count">loading…</span></strong>
+    <strong>
+      <span id="visit-count">…</span>
+    </strong>
     times.
   </p>
 </div>
 
-<!--
-  Visit Counter Script
-  --------------------
-  This script:
-  - Calls the Azure Function via HTTP
-  - Updates the visit count dynamically
-  - Does NOT block page rendering
-  - Fails gracefully if the function is unavailable
--->
+<!-- ============================================================
+     Client-side Visit Counter (Azure Function)
+     ------------------------------------------------------------
+     - Calls the serverless function after page load
+     - Keeps Express stateless
+     - Fails gracefully if the function is unavailable
+============================================================ -->
 <script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    const counterEl = document.getElementById("visit-count");
+  (async function fetchVisitCount() {
+    const visitEl = document.getElementById("visit-count");
 
     try {
       const response = await fetch(
@@ -58,16 +58,15 @@
 
       const data = await response.json();
 
+      // Defensive check — don’t trust the network blindly
       if (typeof data.visits === "number") {
-        counterEl.textContent = data.visits;
+        visitEl.textContent = data.visits;
       } else {
-        counterEl.textContent = "—";
-        console.warn("Unexpected response shape:", data);
+        visitEl.textContent = "—";
       }
-
     } catch (err) {
       console.error("Visit counter failed:", err);
-      counterEl.textContent = "—";
+      visitEl.textContent = "—";
     }
-  });
+  })();
 </script>
