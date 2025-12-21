@@ -18,13 +18,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 /* ============================================================
-   Visit Counter (restored)
-============================================================ */
-
-const counterPath = path.join(__dirname, "counter.json");
-let counter = JSON.parse(fs.readFileSync(counterPath, "utf-8"));
-
-/* ============================================================
    Azure Cosmos DB Configuration
 ============================================================ */
 
@@ -65,13 +58,15 @@ const siteData = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
    Routes
 ============================================================ */
 
+/**
+ * Home
+ * NOTE:
+ * Visit counter is now handled client-side via Azure Function.
+ * No server-side visit tracking remains here.
+ */
 app.get("/", (req, res) => {
-  counter.visits += 1;
-  fs.writeFileSync(counterPath, JSON.stringify(counter, null, 2));
-
   res.render("home", {
     title: "Home",
-    visits: counter.visits,
   });
 });
 
