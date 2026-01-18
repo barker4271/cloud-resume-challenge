@@ -2,16 +2,6 @@
 
 This is my active tenant on azure
 EnvironmentName      AzureCloud
-HomeTenantId         fbec6ece-94af-4aa4-9214-09087b601439
-IsDefault            True
-Name                 Azure subscription 1
-State                Enabled
-TenantDefaultDomain  wookietoastoutlook.onmicrosoft.com
-TenantDisplayName    Default Directory
-TenantId             fbec6ece-94af-4aa4-9214-09087b601439
-
-
-All work being done via "WookieAdmin@wookietoastoutlook.onmicrosoft.com" ID
 
 Azure is a nightmare to get configured correctly...SO MANY small settings that are not obvious to a newcomer
 
